@@ -43,7 +43,6 @@ public class MD380DFU {
     static final int ABORT=6;
 
 
-
     MD380DFU(UsbManager manager){
         this.manager=manager;
     }
