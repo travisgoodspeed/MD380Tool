@@ -75,7 +75,6 @@ public class MD380DFU {
                     return false;
                 }
 
-
                 //Brag about it.
                 return true;
             }
