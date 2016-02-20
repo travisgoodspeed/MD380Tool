@@ -181,4 +181,20 @@ public class MD380DFU {
         }
         return str;
     }
+
+    //Convenience function to grab the unsigned value of a byte.
+    static int u8(byte b){
+        return ((int)b)&0xFF;
+    }
+    //Convenience function to yank a 32-bit word from a byte array.
+    static int intfrombytes(byte[] data, int i){
+        int j=0;
+        j= (int) (
+                 u8(data[i])
+                         | (u8(data[i+1])<<8)
+                |(u8(data[i+2])<<16)
+                |(u8(data[i+3])<<24)
+        );
+        return j;
+    }
 }

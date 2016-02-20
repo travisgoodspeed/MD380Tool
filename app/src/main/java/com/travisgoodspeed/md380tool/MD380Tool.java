@@ -53,25 +53,9 @@ public class MD380Tool extends MD380DFU {
 
         Log.d("getCallLog",String.format("Got %d bytes.",log.length));
 
-        toret[0]=(int) (
-                log[0]
-                +(log[1]<<8)
-                +(log[2]<<16)
-                +(log[3]<<24)
-                );
-
-        toret[1]=(int) (
-                log[4]
-                +(log[5]<<8)
-                +(log[6]<<16)
-                +(log[7]<<24)
-        );
-        toret[2]=(int) (
-                log[8]
-                +(log[9]<<8)
-                +(log[10]<<16)
-                +(log[11]<<24)
-        );
+        toret[0]=intfrombytes(log,0);
+        toret[1]=intfrombytes(log,4);
+        toret[2]=intfrombytes(log,8);
 
         return toret;
 

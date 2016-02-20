@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity
                                 tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
                                 if (tool.connect()) {
                                     int[] log=tool.getCallLog();
-                                    textInfo.setText(String.format("Last call from %d to %d.",
-                                            log[1], log[2]));
+                                    textInfo.setText(String.format("DMR call from %d to %d.\n",
+                                            log[1], log[2])+textInfo.getText());
 
                                     tool.drawText("Done!",160,50);
 
@@ -140,10 +140,10 @@ public class MainActivity extends AppCompatActivity
             UsbDevice device = deviceIterator.next();
             if(device.getVendorId()==0x0483 && device.getProductId()==0xDF11){
                 manager.requestPermission(device, pendingIntent);
-                textInfo.setText("Found device and requested permissions.");
+                //textInfo.setText("Found device and requested permissions.");
             }
         }
-        textInfo.setText("Device not found.");
+        //textInfo.setText("Device not found.");
         return;
     }
 
