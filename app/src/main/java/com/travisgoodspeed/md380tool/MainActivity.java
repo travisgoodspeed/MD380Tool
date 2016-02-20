@@ -28,7 +28,7 @@ public class MainActivity  extends Activity {
     Button btnCheck;
     TextView textInfo;
 
-    MD380Tool tool;
+    MD380Tool tool=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +58,24 @@ public class MainActivity  extends Activity {
                     UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if(device != null){
-                            tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
-                            if(tool.connect()){
-                                textInfo.setText("Connected to the MD380.");
-                                if(tool.drawText("Android MD380!",160,50))
-                                    textInfo.setText("Drew text to the screen.");
-                            }else{
-                                textInfo.setText("Failed to connect.");
+                            try {
+                                //if(tool==null)
+                                tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
+                                if (tool.connect()) {
+                                    int[] log=tool.getCallLog();
+                                    textInfo.setText(String.format("Last call from %d to %d.",
+                                            log[1], log[2]));
+
+                                    tool.drawText("Done!",160,50);
+
+                                } else {
+                                    textInfo.setText("Failed to connect.");
+                                }
+                            }catch(MD380Exception e){
+                                Log.e("MD380",e.getMessage());
+                                e.printStackTrace();
+                                textInfo.setText(e.getMessage());
+                                tool.disconnect();
                             }
                         }
                     } else {
