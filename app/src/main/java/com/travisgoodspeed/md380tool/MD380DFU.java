@@ -111,6 +111,24 @@ public class MD380DFU {
         byte buf[]=new byte[5];
 
         //Secret command code to set the address when writing to Block 0.
+        buf[0]=0x21;
+        //Little-endian representation of the address.
+        buf[1]=(byte) (address&0xFF);
+        buf[2]=(byte) ((address>>8)&0xFF);
+        buf[3]=(byte) ((address>>16)&0xFF);
+        buf[4]=(byte) ((address>>24)&0xFF);
+
+
+        download(0,buf);
+
+        return;
+    }
+
+    /* Sets the DFU target address. */
+    void eraseBlock(int address) throws MD380Exception{
+        byte buf[]=new byte[5];
+
+        //Secret command code to set the address when writing to Block 0.
         buf[0]=0x41;
         //Little-endian representation of the address.
         buf[1]=(byte) (address&0xFF);
