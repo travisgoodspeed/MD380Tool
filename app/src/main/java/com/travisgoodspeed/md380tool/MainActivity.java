@@ -33,9 +33,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import layout.HomeFragment;
+import layout.LogFragment;
+
+
 /**
  * Created by tgoodspeed on 2/19/16.
  */
+
+
+
+
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Button btnCheck;
@@ -72,9 +88,24 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Fragment fragment = null;
 
+        Class fragmentClass;
+
+        fragmentClass = HomeFragment.class;
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // old stuff
+        /*
         btnCheck = (Button) findViewById(R.id.check);
         textInfo = (TextView) findViewById(R.id.info);
         btnCheck.setOnClickListener(new OnClickListener() {
@@ -85,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+        */
 
     }
 
@@ -125,6 +157,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
 
     private void getPermissions(){
         UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -182,19 +215,47 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        // Create a new fragment and specify the planet to show based on
+        // position
+        Fragment fragment = null;
+
+        Class fragmentClass;
+        switch(item.getItemId()) {
+            case R.id.nav_manage:
+                fragmentClass = HomeFragment.class;
+                Log.w("myApp", "manage!!!");
+                break;
+            case R.id.nav_log:
+                fragmentClass = LogFragment.class;
+                break;
+            default:
+                fragmentClass = HomeFragment.class;
+        }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        /*
         if (id == R.id.nav_manage) {
             Log.w("myApp", "manage");
-
         } else if (id == R.id.nav_log) {
             Log.w("myApp", "log");
-
         }
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
