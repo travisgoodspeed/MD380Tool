@@ -77,13 +77,20 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.home, container, false);
 
         Button btnCheck = (Button) v.findViewById(R.id.check);
-        TextView textInfo = (TextView) v.findViewById(R.id.info);
+        final TextView textInfo = (TextView) v.findViewById(R.id.info);
         btnCheck.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 //getPermissions();
                 Log.e("what", "hi there");
+                textInfo.setText(
+                        "\n\n\n\n" +  //Waste four lines for placement.
+                                "Connecting");
+                if(MainActivity.selfy!=null)
+                    MainActivity.selfy.getPermissions();
+                else
+                    textInfo.setText("\n\n\n\nCan't find the USB handle.");
             }
         });
 
@@ -94,7 +101,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override

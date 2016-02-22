@@ -8,7 +8,7 @@
         android:id="@+id/check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fetch Call Log"
+        android:text="Connect to MD380"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

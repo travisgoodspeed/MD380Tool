@@ -54,14 +54,19 @@ import layout.LogFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    Button btnCheck;
-    TextView textInfo;
+    //Button btnCheck;
+    //TextView textInfo;
 
-    MD380Tool tool=null;
+    //This points to our global tool.
+    public static MD380Tool tool=null;
+    //This is ugly, but so it goes.
+    public static MainActivity selfy=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Record our static handle for the other views.
+        selfy=this;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -135,23 +140,23 @@ public class MainActivity extends AppCompatActivity
                                 tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
                                 if (tool.connect()) {
                                     int[] log=tool.getCallLog();
-                                    textInfo.setText(String.format("DMR call from %d to %d.\n",
-                                            log[1], log[2])+textInfo.getText());
+                                    //textInfo.setText(String.format("DMR call from %d to %d.\n",
+                                    //        log[1], log[2])+textInfo.getText());
 
                                     tool.drawText("Done!",160,50);
 
                                 } else {
-                                    textInfo.setText("Failed to connect.");
+                                    //textInfo.setText("Failed to connect.");
                                 }
                             }catch(MD380Exception e){
                                 Log.e("MD380",e.getMessage());
                                 e.printStackTrace();
-                                textInfo.setText(e.getMessage());
+                                //textInfo.setText(e.getMessage());
                                 tool.disconnect();
                             }
                         }
                     } else {
-                        textInfo.setText("Device permission denied.");
+                        //textInfo.setText("Device permission denied.");
                     }
                 }
             }
@@ -159,7 +164,8 @@ public class MainActivity extends AppCompatActivity
     };
 
 
-    private void getPermissions(){
+    //Requests permissions to the target device.
+    public void getPermissions(){
         UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
@@ -167,6 +173,8 @@ public class MainActivity extends AppCompatActivity
         PendingIntent pendingIntent=PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);;
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         registerReceiver(mUsbReceiver, filter);
+
+
 
         String i = "";
         while (deviceIterator.hasNext()) {
@@ -230,10 +238,11 @@ public class MainActivity extends AppCompatActivity
         switch(item.getItemId()) {
             case R.id.nav_manage:
                 fragmentClass = HomeFragment.class;
-                Log.w("myApp", "manage!!!");
+                Log.w("myApp", "Home fragment.");
                 break;
             case R.id.nav_log:
                 fragmentClass = LogFragment.class;
+                Log.w("myApp", "call log!!!");
                 break;
             default:
                 fragmentClass = HomeFragment.class;
@@ -262,44 +271,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private String translateDeviceClass(int deviceClass){
-        switch(deviceClass){
-            case UsbConstants.USB_CLASS_APP_SPEC:
-                return "Application specific USB class";
-            case UsbConstants.USB_CLASS_AUDIO:
-                return "USB class for audio devices";
-            case UsbConstants.USB_CLASS_CDC_DATA:
-                return "USB class for CDC devices (communications device class)";
-            case UsbConstants.USB_CLASS_COMM:
-                return "USB class for communication devices";
-            case UsbConstants.USB_CLASS_CONTENT_SEC:
-                return "USB class for content security devices";
-            case UsbConstants.USB_CLASS_CSCID:
-                return "USB class for content smart card devices";
-            case UsbConstants.USB_CLASS_HID:
-                return "USB class for human interface devices (for example, mice and keyboards)";
-            case UsbConstants.USB_CLASS_HUB:
-                return "USB class for USB hubs";
-            case UsbConstants.USB_CLASS_MASS_STORAGE:
-                return "USB class for mass storage devices";
-            case UsbConstants.USB_CLASS_MISC:
-                return "USB class for wireless miscellaneous devices";
-            case UsbConstants.USB_CLASS_PER_INTERFACE:
-                return "USB class indicating that the class is determined on a per-interface basis";
-            case UsbConstants.USB_CLASS_PHYSICA:
-                return "USB class for physical devices";
-            case UsbConstants.USB_CLASS_PRINTER:
-                return "USB class for printers";
-            case UsbConstants.USB_CLASS_STILL_IMAGE:
-                return "USB class for still image devices (digital cameras)";
-            case UsbConstants.USB_CLASS_VENDOR_SPEC:
-                return "Vendor specific USB class";
-            case UsbConstants.USB_CLASS_VIDEO:
-                return "USB class for video devices";
-            case UsbConstants.USB_CLASS_WIRELESS_CONTROLLER:
-                return "USB class for wireless controller devices";
-            default: return "Unknown USB class!";
+    void doConnect(View view){
 
-        }
     }
 }

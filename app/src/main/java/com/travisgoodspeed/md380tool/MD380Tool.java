@@ -15,7 +15,7 @@ public class MD380Tool extends MD380DFU {
     }
 
     /* Draws text to the MD380's screen using a hooked DNLOAD handler. */
-    void drawText(String text, int x, int y) throws MD380Exception{
+    public void drawText(String text, int x, int y) throws MD380Exception{
         byte buf[];
         int len=0;
 
@@ -33,7 +33,7 @@ public class MD380Tool extends MD380DFU {
     }
 
     /* Uploads a chunk of data from the given address. */
-    byte[] upload_ram(int adr, int length) throws MD380Exception{
+    public byte[] upload_ram(int adr, int length) throws MD380Exception{
         setAddress(adr);
         setAddress(adr);
         setAddress(adr);
@@ -46,7 +46,7 @@ public class MD380Tool extends MD380DFU {
     * [1] is the source address of the most recent packet.
     * [2] is the destination address of the most recent packet.
     */
-    int[] getCallLog() throws MD380Exception{
+    public int[] getCallLog() throws MD380Exception{
         byte log[]=upload_ram(0x2001d098,16);
         int toret[]=new int[3];
 

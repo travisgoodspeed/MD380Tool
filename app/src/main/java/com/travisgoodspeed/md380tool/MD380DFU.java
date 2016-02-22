@@ -47,12 +47,12 @@ public class MD380DFU {
         this.manager=manager;
     }
 
-    boolean isConnected(){
+    public boolean isConnected(){
         return false;
     }
 
     /* Don't call this until after permission has been granted.*/
-    boolean connect(){
+    public boolean connect(){
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
 
@@ -83,12 +83,12 @@ public class MD380DFU {
         return false;
     }
 
-    void disconnect(){
+    public void disconnect(){
         connection.close();
     }
 
     /* Gets the DFU status. */
-    byte[] getStatus() throws MD380Exception{
+    public byte[] getStatus() throws MD380Exception{
         byte buf[]=new byte[6];
         int len=0;
 
@@ -99,7 +99,7 @@ public class MD380DFU {
     }
 
     /* Gets the DFU state. */
-    int getState() throws MD380Exception{
+    public int getState() throws MD380Exception{
         byte[] buf=new byte[1];
         if(connection.controlTransfer(0xA1,GETSTATE,0,0,buf,1,3000)<0)
             throw new MD380Exception("Transfer Error");
@@ -107,7 +107,7 @@ public class MD380DFU {
     }
 
     /* Sets the DFU target address. */
-    void setAddress(int address) throws MD380Exception{
+    public void setAddress(int address) throws MD380Exception{
         byte buf[]=new byte[5];
 
         //Secret command code to set the address when writing to Block 0.
@@ -125,7 +125,7 @@ public class MD380DFU {
     }
 
     /* Sets the DFU target address. */
-    void eraseBlock(int address) throws MD380Exception{
+    public void eraseBlock(int address) throws MD380Exception{
         byte buf[]=new byte[5];
 
         //Secret command code to set the address when writing to Block 0.
@@ -143,7 +143,7 @@ public class MD380DFU {
     }
 
     /* Uploads data from the radio at the target address. */
-    byte[] upload(int block, int length) throws MD380Exception{
+    public byte[] upload(int block, int length) throws MD380Exception{
         byte[] data=new byte[length];
         if(connection.controlTransfer(0xA1,UPLOAD,block,0,data,length,3000)<0)
             throw new MD380Exception("Transfer Error");
@@ -154,7 +154,7 @@ public class MD380DFU {
     }
 
     /* Downloads data to a target block. */
-    byte[] download(int block, byte buf[]) throws MD380Exception{
+    public byte[] download(int block, byte buf[]) throws MD380Exception{
         Log.d("DNLOAD",bytes2hexstr(buf));
         if(connection.controlTransfer(0x21,DNLOAD,block,0,buf,buf.length,3000)<0)
             Log.d("download()","Declining to toss an exception.");//throw new MD380Exception("Transfer Error");
@@ -166,7 +166,7 @@ public class MD380DFU {
     }
 
     /* Calls an MD380 custom DFU command. */
-    void md380cmd(byte a, byte b) throws MD380Exception{
+    public void md380cmd(byte a, byte b) throws MD380Exception{
         byte data[]=new byte[2];
         data[0]=a;
         data[1]=b;
@@ -174,18 +174,18 @@ public class MD380DFU {
     }
 
     /* Reboots the radio. */
-    void reboot() throws MD380Exception{
+    public void reboot() throws MD380Exception{
         //This is one of the custom commands in the 91 series.
         md380cmd((byte) 0x91, (byte) 0x05);
     }
     /* Halts all threads and displays "Programming Mode" on the screen. */
-    void programMode() throws MD380Exception{
+    public void programMode() throws MD380Exception{
         //This is one of the custom commands in the 91 series.
         md380cmd((byte) 0x91, (byte) 0x01);
     }
 
     //Convenience function that hexdumps some data.
-    static String bytes2hexstr(byte[] data){
+    public static String bytes2hexstr(byte[] data){
         String str="";
         int i,j;
         for(i=0;i<data.length;i++){
@@ -201,11 +201,11 @@ public class MD380DFU {
     }
 
     //Convenience function to grab the unsigned value of a byte.
-    static int u8(byte b){
+    public static int u8(byte b){
         return ((int)b)&0xFF;
     }
     //Convenience function to yank a 32-bit word from a byte array.
-    static int intfrombytes(byte[] data, int i){
+    public static int intfrombytes(byte[] data, int i){
         int j=0;
         j= (int) (
                  u8(data[i])

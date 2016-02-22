@@ -5,12 +5,12 @@
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Connect" />
 
         <item
             android:id="@+id/nav_log"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Log" />
+            android:title="Call Log" />
     </group>
 
     <!--
