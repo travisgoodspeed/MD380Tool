@@ -47,8 +47,9 @@ public class MD380DFU {
         this.manager=manager;
     }
 
+    private boolean connected=false;
     public boolean isConnected(){
-        return false;
+        return connected;
     }
 
     /* Don't call this until after permission has been granted.*/
@@ -69,12 +70,14 @@ public class MD380DFU {
 
                 Log.d("MD380","Trying to open interface on 0");
                 usbInterface = device.getInterface(0);
-                if (!connection.claimInterface(usbInterface, true)) {
+                if (usbInterface==null || !connection.claimInterface(usbInterface, true)) {
                     Log.d("MD380","Could not claim interface on 0");
                     return false;
                 }
 
-                //Brag about it.
+                //We're good, so return true.
+                Log.d("MD380","Connected");
+                connected=true;
                 return true;
             }
         }
@@ -84,16 +87,20 @@ public class MD380DFU {
     }
 
     public void disconnect(){
+        connected=false;
         connection.close();
     }
+
 
     /* Gets the DFU status. */
     public byte[] getStatus() throws MD380Exception{
         byte buf[]=new byte[6];
         int len=0;
 
-        if(connection.controlTransfer(0xA1,GETSTATUS,0,0,buf,6,3000)<0)
+        if(connection.controlTransfer(0xA1,GETSTATUS,0,0,buf,6,3000)<0) {
+            connected=false;
             throw new MD380Exception("Transfer Error");
+        }
 
         return buf;
     }
@@ -101,8 +108,10 @@ public class MD380DFU {
     /* Gets the DFU state. */
     public int getState() throws MD380Exception{
         byte[] buf=new byte[1];
-        if(connection.controlTransfer(0xA1,GETSTATE,0,0,buf,1,3000)<0)
+        if(connection.controlTransfer(0xA1,GETSTATE,0,0,buf,1,3000)<0) {
+            connected=false;
             throw new MD380Exception("Transfer Error");
+        }
         return (int) buf[0];
     }
 
@@ -151,8 +160,10 @@ public class MD380DFU {
     /* Uploads data from the radio at the target address. */
     public byte[] upload(int block, int length) throws MD380Exception{
         byte[] data=new byte[length];
-        if(connection.controlTransfer(0xA1,UPLOAD,block,0,data,length,3000)<0)
+        if(connection.controlTransfer(0xA1,UPLOAD,block,0,data,length,3000)<0) {
+            connected=false;
             throw new MD380Exception("Transfer Error");
+        }
 
         getStatus();
 
@@ -167,7 +178,7 @@ public class MD380DFU {
 
     /* Downloads data to a target block. */
     public byte[] download(int block, byte buf[]) throws MD380Exception{
-        Log.d("DNLOAD",bytes2hexstr(buf));
+        Log.d("DNLOAD",block+"---"+bytes2hexstr(buf));
         if(connection.controlTransfer(0x21,DNLOAD,block,0,buf,buf.length,3000)<0)
             Log.d("download()","Declining to toss an exception.");//throw new MD380Exception("Transfer Error");
         //First we apply the change.

@@ -2,6 +2,7 @@ package layout;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,8 @@ import com.travisgoodspeed.md380tool.MD380Exception;
 import com.travisgoodspeed.md380tool.MD380Tool;
 import com.travisgoodspeed.md380tool.MainActivity;
 import com.travisgoodspeed.md380tool.R;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +40,60 @@ public class DmesgFragment extends Fragment {
     //! Buffer for our call log.
     public static String dmesglog="";
     private int oldsrc=0, olddst=0;
+
+    /* This task grabs the dmesg at regular intervals, in the main thread
+        to avoid contention.
+     */
+    private class FetchDmesgTask extends AsyncTask<TextView, Integer, Void> {
+        Integer frame=0;
+        @Override
+        protected Void doInBackground(TextView... params) {
+            TextView ti=params[0];
+            //Run until we're cancelled.
+            while(!isCancelled()) {
+                frame = frame + 1;
+                //The actual work is done in onProgressUpdate() in the UI thread.
+                publishProgress(frame);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(Integer... params){
+            //final TextView textInfo = (TextView) view.findViewById(R.id.txt_dmesg);
+            Log.d("dmesgfetcher",
+                    String.format("Fetched Dmesg frame %d",params[0]));
+            MD380Tool tool= MainActivity.tool;
+            try {
+                if (tool!=null && tool.isConnected()) {
+                    int[] log=tool.getCallLog();
+
+                    if(textInfo!=null)
+                        textInfo.setText(addLog(tool.getDmesg()));
+                    else
+                        Log.e("Dmesg","textInfo==null.  WTF?");
+
+                    //tool.drawText("Done!",160,50);
+                } else {
+                    textInfo.setText("Failed to connect.");
+                }
+            }catch(MD380Exception e){
+                Log.e("MD380",e.getMessage());
+                e.printStackTrace();
+                if(textInfo!=null)
+                    textInfo.setText(e.getMessage());
+                tool.disconnect();
+            }
+        }
+        protected void onPostExecute(String result){
+            Log.d("dmesgfetched","The dmesg log task has completed.");
+        }
+    }
+    FetchDmesgTask bgtask=null;
 
     //! Logs a new entry.
     public String addLog(String newfrag){
@@ -79,46 +136,27 @@ public class DmesgFragment extends Fragment {
         }
     }
 
+
+    TextView textInfo;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_dmesg, container, false);
+        textInfo = (TextView) v.findViewById(R.id.txt_dmesg);
+
+        /*
         Button btnCheck = (Button) v.findViewById(R.id.but_dmesg);
-        final TextView textInfo = (TextView) v.findViewById(R.id.txt_dmesg);
+
         btnCheck.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 //getPermissions();
                 Log.e("Dmesg", "Button was pressed in the Dmesg view.");
-
-                //TextView textInfo = (TextView) v.findViewById(R.id.info);
-
-                MD380Tool tool= MainActivity.tool;
-                try {
-                    if (tool!=null && tool.connect()) {
-                        int[] log=tool.getCallLog();
-
-                        if(textInfo!=null)
-                            textInfo.setText(addLog(tool.getDmesg()));
-                        else
-                            Log.e("Dmesg","textInfo==null.  WTF?");
-
-                        tool.drawText("Done!",160,50);
-                    } else {
-                        textInfo.setText("Failed to connect.");
-                    }
-                }catch(MD380Exception e){
-                    Log.e("MD380",e.getMessage());
-                    e.printStackTrace();
-                    if(textInfo!=null)
-                        textInfo.setText(e.getMessage());
-                    tool.disconnect();
-                }
-
             }
         });
+        */
 
         return v;
     }
@@ -139,12 +177,23 @@ public class DmesgFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
+        if(bgtask==null && MainActivity.tool!=null && MainActivity.tool.isConnected()) {
+            bgtask = new FetchDmesgTask();
+            bgtask.execute(textInfo);
+        }else{
+            Log.d("dmesg","bgtask!=null at onAttach()!");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        if(bgtask!=null){
+            bgtask.cancel(false);
+            bgtask=null;
+        }
     }
 
     /**
