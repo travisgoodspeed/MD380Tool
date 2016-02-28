@@ -35,8 +35,6 @@ public class MD380Tool extends MD380DFU {
     /* Uploads a chunk of data from the given address. */
     public byte[] upload_ram(int adr, int length) throws MD380Exception{
         setAddress(adr);
-        setAddress(adr);
-        setAddress(adr);
         return upload(1,length);
     }
 

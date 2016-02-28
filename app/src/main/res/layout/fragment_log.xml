@@ -26,12 +26,14 @@
                 android:layout_gravity="center_horizontal|top" />
         </ScrollView>
 
+        <!-- Used to need a button.
         <Button
             android:id="@+id/check"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Fetch Call Log"
             android:layout_gravity="center_horizontal|bottom"/>
+            -->
     </LinearLayout>
 
 

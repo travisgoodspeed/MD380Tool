@@ -70,8 +70,6 @@ public class DmesgFragment extends Fragment {
             MD380Tool tool= MainActivity.tool;
             try {
                 if (tool!=null && tool.isConnected()) {
-                    int[] log=tool.getCallLog();
-
                     if(textInfo!=null)
                         textInfo.setText(addLog(tool.getDmesg()));
                     else
