@@ -1,7 +1,6 @@
 package layout;
 
 import android.content.Context;
-import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,12 +19,12 @@ import com.travisgoodspeed.md380tool.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LogFragment.OnFragmentInteractionListener} interface
+ * {@link DmesgFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LogFragment#newInstance} factory method to
+ * Use the {@link DmesgFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LogFragment extends Fragment {
+public class DmesgFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,25 +35,20 @@ public class LogFragment extends Fragment {
     private String mParam2;
 
     //! Buffer for our call log.
-    public static String calllog="";
+    public static String dmesglog="";
     private int oldsrc=0, olddst=0;
-    //! Logs a new entry, if it's new.
-    public String addLog(int src, int dst){
-        
-        //Is the record new?
-        if(oldsrc!=src || olddst!=dst){
-            //Update so we don't double-list.
-            oldsrc=src; olddst=dst;
-            //Add it to the text log.
-            calllog=String.format("Call from %d to %d.\n",src,dst)+calllog;
-            //TODO long-term logging?  Name lookups?
-        }
 
-        return calllog;
+    //! Logs a new entry.
+    public String addLog(String newfrag){
+        //Append the new log fragment.
+        dmesglog=dmesglog+newfrag;
+
+        return dmesglog;
     }
 
+    private OnFragmentInteractionListener mListener;
 
-    public LogFragment() {
+    public DmesgFragment() {
         // Required empty public constructor
     }
 
@@ -64,11 +58,11 @@ public class LogFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LogFragment.
+     * @return A new instance of fragment DmesgFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LogFragment newInstance(String param1, String param2) {
-        LogFragment fragment = new LogFragment();
+    public static DmesgFragment newInstance(String param1, String param2) {
+        DmesgFragment fragment = new DmesgFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -89,16 +83,15 @@ public class LogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_log, container, false);
-
-        Button btnCheck = (Button) v.findViewById(R.id.check);
-        final TextView textInfo = (TextView) v.findViewById(R.id.info);
+        View v= inflater.inflate(R.layout.fragment_dmesg, container, false);
+        Button btnCheck = (Button) v.findViewById(R.id.but_dmesg);
+        final TextView textInfo = (TextView) v.findViewById(R.id.txt_dmesg);
         btnCheck.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 //getPermissions();
-                Log.e("what", "Button was pressed in the Log view.");
+                Log.e("Dmesg", "Button was pressed in the Dmesg view.");
 
                 //TextView textInfo = (TextView) v.findViewById(R.id.info);
 
@@ -108,9 +101,9 @@ public class LogFragment extends Fragment {
                         int[] log=tool.getCallLog();
 
                         if(textInfo!=null)
-                            textInfo.setText(addLog(log[1],log[2]));
+                            textInfo.setText("\n\n\n\n"+addLog("test"));
                         else
-                            Log.e("textInfo","textInfo==null.  WTF?");
+                            Log.e("Dmesg","textInfo==null.  WTF?");
 
                         tool.drawText("Done!",160,50);
                     } else {
@@ -132,21 +125,40 @@ public class LogFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
     }
-
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
 }

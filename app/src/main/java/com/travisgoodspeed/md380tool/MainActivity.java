@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
 
@@ -53,7 +55,7 @@ import layout.LogFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener{
     //Button btnCheck;
     //TextView textInfo;
 
@@ -238,11 +240,15 @@ public class MainActivity extends AppCompatActivity
         switch(item.getItemId()) {
             case R.id.nav_manage:
                 fragmentClass = HomeFragment.class;
-                Log.w("myApp", "Home fragment.");
+                Log.w("Nav", "Home fragment.");
                 break;
             case R.id.nav_log:
                 fragmentClass = LogFragment.class;
-                Log.w("myApp", "call log!!!");
+                Log.w("Nav", "Log fragment.");
+                break;
+            case R.id.nav_dmesg:
+                fragmentClass = DmesgFragment.class;
+                Log.w("Nav", "Dmesg fragment.");
                 break;
             default:
                 fragmentClass = HomeFragment.class;
@@ -273,5 +279,10 @@ public class MainActivity extends AppCompatActivity
 
     void doConnect(View view){
 
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.d("Huh","Some misunderstood interaction with "+uri);
     }
 }

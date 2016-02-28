@@ -142,6 +142,12 @@ public class MD380DFU {
         return;
     }
 
+    /* Detaches from the target.  The STM32's DFU will execute the application when this is called. */
+    void detach(){
+        //This will probably timeout.  So it goes.
+        connection.controlTransfer(0x21, DETACH, 0, 0, null, 0, 3000);
+    }
+
     /* Uploads data from the radio at the target address. */
     public byte[] upload(int block, int length) throws MD380Exception{
         byte[] data=new byte[length];
@@ -151,6 +157,12 @@ public class MD380DFU {
         getStatus();
 
         return data;
+    }
+
+    /* Gets the command response. */
+    byte[] getCommand() throws MD380Exception{
+        /* The command block comes from block zero.  The size is always 32. */
+        return upload(0,32);
     }
 
     /* Downloads data to a target block. */

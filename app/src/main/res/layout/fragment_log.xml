@@ -4,31 +4,19 @@
     android:layout_height="match_parent"
     tools:context="layout.LogFragment">
 
-    <!--
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="50pt" />
-    -->
 
-    <!-- TODO This layout is borked. -->
     <Button
         android:id="@+id/check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Fetch Call Log"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_gravity="center_horizontal|bottom"/>
     <TextView
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/check"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:layout_gravity="center_horizontal|top" />
 
 
 
