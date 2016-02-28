@@ -101,7 +101,7 @@ public class DmesgFragment extends Fragment {
                         int[] log=tool.getCallLog();
 
                         if(textInfo!=null)
-                            textInfo.setText("\n\n\n\n"+addLog("test"));
+                            textInfo.setText(addLog(tool.getDmesg()));
                         else
                             Log.e("Dmesg","textInfo==null.  WTF?");
 

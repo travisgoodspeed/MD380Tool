@@ -40,6 +40,40 @@ public class MD380Tool extends MD380DFU {
         return upload(1,length);
     }
 
+    /* Uploads the latest dmesg log and clears the buffer from the device. */
+    public String getDmesg() throws MD380Exception{
+        //First we use DNLOAD to set the address.
+        byte buf[] = new byte[1];
+        buf[0]=0x00; //DMESG command.
+        download(1,buf);
+
+        //Then we fetch it with an UPLOAD.
+        byte dmesgbuf[]=upload(1,1024);
+
+        //And we re-order it if there has been an overflow.
+        String tail="";
+        String head=null;
+        for(int i=0;i<1024;i++){
+            int b=((int) dmesgbuf[i])&0xFF;
+            if(head==null){
+                if(b>0) //If the character isn't null, we append it.
+                    tail=tail+String.format("%c",b);
+                else //otherwise, we initialize the head and hope the later characters are.
+                    head="";
+            }else{
+                if(b>0)
+                    head=head+String.format("%c",b);
+                else
+                    break;
+            }
+        }
+
+        //Return the linearized buffer.
+        if(head==null)
+            return tail;
+        return head+tail;
+    }
+
     /* Returns the source and destination of the most recent call by peeking memory.
     * In the returned array,
     * [0] is the outgoing address of this radio.

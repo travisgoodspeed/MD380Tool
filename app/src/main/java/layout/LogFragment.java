@@ -98,7 +98,7 @@ public class LogFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //getPermissions();
-                Log.e("what", "Button was pressed in the Log view.");
+                Log.e("Log", "Button was pressed in the Log view.");
 
                 //TextView textInfo = (TextView) v.findViewById(R.id.info);
 
