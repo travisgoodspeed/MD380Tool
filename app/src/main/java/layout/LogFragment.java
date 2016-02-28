@@ -46,8 +46,7 @@ public class LogFragment extends Fragment {
             //Update so we don't double-list.
             oldsrc=src; olddst=dst;
             //Add it to the text log.
-            calllog=String.format("Call from %d to %d.\n",src,dst)+calllog;
-            //TODO long-term logging?  Name lookups?
+            calllog=calllog+String.format("Call from %d to %d.\n",src,dst);
         }
 
         return calllog;
