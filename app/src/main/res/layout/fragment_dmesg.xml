@@ -9,32 +9,31 @@
 
 
 
-        <LinearLayout
-            android:orientation="vertical"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center">
+            android:layout_gravity="top"
+            android:layout_weight="1">
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="top"
-                android:layout_weight="1">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No dmesg has been logged yet.\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo\n\nfoo"
+                android:text="No dmesg has been logged yet."
                 android:id="@+id/txt_dmesg"/>
-            </ScrollView>
+        </ScrollView>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Fetch DMESG"
-                android:id="@+id/but_dmesg"
-                android:layout_gravity="right" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fetch DMESG"
+            android:id="@+id/but_dmesg"
+            android:layout_gravity="right" />
 
-        </LinearLayout>
-
-
+    </LinearLayout>
 </FrameLayout>
