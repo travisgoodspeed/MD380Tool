@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
+import layout.UpgradeFragment;
 
 
 /**
@@ -55,7 +56,7 @@ import layout.LogFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener, UpgradeFragment.OnFragmentInteractionListener{
     //Button btnCheck;
     //TextView textInfo;
 
@@ -141,11 +142,14 @@ public class MainActivity extends AppCompatActivity
                                 //if(tool==null)
                                 tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
                                 if (tool.connect()) {
+                                    //TODO Check to see what sort of device we're connected to.
+                                    /*
                                     int[] log=tool.getCallLog();
                                     //textInfo.setText(String.format("DMR call from %d to %d.\n",
                                     //        log[1], log[2])+textInfo.getText());
 
                                     tool.drawText("Done!",160,50);
+                                    */
 
                                 } else {
                                     //textInfo.setText("Failed to connect.");
@@ -166,8 +170,10 @@ public class MainActivity extends AppCompatActivity
     };
 
 
-    //Requests permissions to the target device.
-    public void getPermissions(){
+    /* Requests permissions to the target device.
+       Return true if the permissions were requested, false if device not found.
+     */
+    public boolean getPermissions(){
         UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
@@ -183,11 +189,10 @@ public class MainActivity extends AppCompatActivity
             UsbDevice device = deviceIterator.next();
             if(device.getVendorId()==0x0483 && device.getProductId()==0xDF11){
                 manager.requestPermission(device, pendingIntent);
-                //textInfo.setText("Found device and requested permissions.");
+                return true;
             }
         }
-        //textInfo.setText("Device not found.");
-        return;
+        return false;
     }
 
 
@@ -249,6 +254,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_dmesg:
                 fragmentClass = DmesgFragment.class;
                 Log.w("Nav", "Dmesg fragment.");
+                break;
+            case R.id.nav_upgrade:
+                fragmentClass = UpgradeFragment.class;
+                Log.w("Nav", "Upgrade fragment.");
                 break;
             default:
                 fragmentClass = HomeFragment.class;

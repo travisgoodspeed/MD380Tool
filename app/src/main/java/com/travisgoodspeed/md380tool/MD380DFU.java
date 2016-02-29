@@ -1,6 +1,8 @@
 package com.travisgoodspeed.md380tool;
 
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -53,7 +55,7 @@ public class MD380DFU {
     }
 
     /* Don't call this until after permission has been granted.*/
-    public boolean connect(){
+    public boolean connect() throws MD380Exception{
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
 
@@ -133,23 +135,7 @@ public class MD380DFU {
         return;
     }
 
-    /* Sets the DFU target address. */
-    public void eraseBlock(int address) throws MD380Exception{
-        byte buf[]=new byte[5];
 
-        //Secret command code to set the address when writing to Block 0.
-        buf[0]=0x41;
-        //Little-endian representation of the address.
-        buf[1]=(byte) (address&0xFF);
-        buf[2]=(byte) ((address>>8)&0xFF);
-        buf[3]=(byte) ((address>>16)&0xFF);
-        buf[4]=(byte) ((address>>24)&0xFF);
-
-
-        download(0,buf);
-
-        return;
-    }
 
     /* Detaches from the target.  The STM32's DFU will execute the application when this is called. */
     void detach(){
@@ -178,9 +164,9 @@ public class MD380DFU {
 
     /* Downloads data to a target block. */
     public byte[] download(int block, byte buf[]) throws MD380Exception{
-        Log.d("DNLOAD",block+"---"+bytes2hexstr(buf));
+        Log.d("DNLOAD", bytes2hexstr(buf, buf.length < 32 ? buf.length : 16));
         if(connection.controlTransfer(0x21,DNLOAD,block,0,buf,buf.length,3000)<0)
-            Log.d("download()","Declining to toss an exception.");//throw new MD380Exception("Transfer Error");
+            throw new MD380Exception("Transfer Error");
         //First we apply the change.
         getStatus();
 
@@ -222,6 +208,21 @@ public class MD380DFU {
         }
         return str;
     }
+    //Convenience function that hexdumps some data.
+    public static String bytes2hexstr(byte[] data, int len){
+        String str="";
+        int i,j;
+        for(i=0;i<len;i++){
+            byte b=data[i];
+            //str=str+Byte.toString(b)+" ";
+            str=str+String.format("%02x ",b);
+            if(i%32==16)
+                str=str+" ";
+            if(i%32==31)
+                str=str+"\n";
+        }
+        return str;
+    }
 
     //Convenience function to grab the unsigned value of a byte.
     public static int u8(byte b){
@@ -238,4 +239,89 @@ public class MD380DFU {
         );
         return j;
     }
+
+    /* This function begins an upgrade by instructing the target radio
+       to enter the appropriate mode.
+     */
+    public void startUpgrade(){
+
+    }
+
+    /* Erases a block, and by side effect sets the target address. */
+    public void eraseBlock(int address) throws MD380Exception{
+        byte buf[]=new byte[5];
+
+        //Secret command code to set the address when writing to Block 0.
+        buf[0]=0x41;
+        //Little-endian representation of the address.
+        buf[1]=(byte) (address&0xFF);
+        buf[2]=(byte) ((address>>8)&0xFF);
+        buf[3]=(byte) ((address>>16)&0xFF);
+        buf[4]=(byte) ((address>>24)&0xFF);
+
+        download(0,buf);
+        return;
+    }
+
+    /* This function performs a complete upgrade.  For obvious reasons, it oughtn't run
+       inside the rendering thread, and you oughtn't run other
+     */
+    public void upgradeApplication(byte[] upgrade) throws MD380Exception{
+        //Check the filesize.
+        if(upgrade.length!=994816){
+            Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not 994816.  Aborting.");
+            return;
+        }
+
+        //Enter programming mode and select flash memory.
+        md380cmd((byte) 0x91, (byte) 0x01);
+        md380cmd((byte) 0x91, (byte) 0x31);
+
+        //Erase the old application.
+        eraseBlock(0x0800c000);
+        for(int i=0x08010000; i<0x080f0000; i+=0x10000)
+            eraseBlock(i);
+
+
+        //Write in the new application.
+        ByteBuffer buf=ByteBuffer.wrap(upgrade);
+        int blocksize=1024;
+        int toget=1024;
+        byte[] block=new byte[blocksize];
+
+        //Point at the beginning of flash.
+        setAddress(0x0800c000);
+
+        //Skip file header, which begins with "OutSecurityBin"
+        buf.get(block, 0, 0x100);
+
+        for(int i=0x0800c000;buf.hasRemaining(); i+=toget){
+            //Grab 1024 bytes or the remainder of the buffer.
+
+            if(buf.remaining()<toget)
+                toget=buf.remaining();
+
+            try {
+                buf.get(block, 0, toget);
+            }catch(BufferUnderflowException e){
+                //We don't care about an underflow, just write what we've got.
+                Log.e("Mismatch","Ignoring a BufferUnderflowException");
+            }
+
+            //Write it to the MD380's flash, starting with blockadr=2.
+            setAddress(i);
+            int adr=2; //(i-0x0800C000)/1024+2;
+            download(adr, block);
+        }
+        Log.e("Done","Wrote "+upgrade.length+" bytes.");
+    }
 }
+
+
+
+
+
+
+
+
+

@@ -83,14 +83,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View arg0) {
                 //getPermissions();
-                Log.e("what", "hi there");
-                textInfo.setText(
-                        "\n\n\n\n" +  //Waste four lines for placement.
-                                "Connecting");
-                if(MainActivity.selfy!=null)
-                    MainActivity.selfy.getPermissions();
+                textInfo.setText("Connecting");
+                if(MainActivity.selfy.getPermissions())
+                    textInfo.setText("Requesting connection.\nPlease approve the request.");
                 else
-                    textInfo.setText("\n\n\n\nCan't find the USB handle.");
+                    textInfo.setText("Can't find the USB device.");
             }
         });
 
