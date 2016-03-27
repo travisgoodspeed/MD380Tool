@@ -28,6 +28,7 @@
 
         <!--Invisible to start, but we'll show it during the upgrade.-->
         <ProgressBar
+            style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pbar_upgrade"

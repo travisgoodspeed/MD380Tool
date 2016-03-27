@@ -164,7 +164,7 @@ public class MD380DFU {
 
     /* Downloads data to a target block. */
     public byte[] download(int block, byte buf[]) throws MD380Exception{
-        Log.d("DNLOAD", bytes2hexstr(buf, buf.length < 32 ? buf.length : 16));
+        //Log.d("DNLOAD", bytes2hexstr(buf, buf.length < 32 ? buf.length : 16));
         if(connection.controlTransfer(0x21,DNLOAD,block,0,buf,buf.length,3000)<0)
             throw new MD380Exception("Transfer Error");
         //First we apply the change.
@@ -288,13 +288,8 @@ public class MD380DFU {
 
         //Erase the old application.
         eraseBlock(0x0800c000);
-
-        /* We used to erase the remaining blocks here, but we'll do
-            it later, as we write each of them.
-
         for(int i=0x08010000; i<0x080f0000; i+=0x10000)
             eraseBlock(i);
-        */
 
         //Write in the new application.
         upgradeBuf=ByteBuffer.wrap(upgradeFile);
@@ -315,35 +310,25 @@ public class MD380DFU {
         int toget=1024;
         byte[] block=new byte[blocksize];
 
-        //Erase the block if we're starting a new one.
-        //This used to be done prior to the start of the upgrade.
-        if((upgradeAddress&0xFFFF)==0)
-            eraseBlock(upgradeAddress);
 
+        if(upgradeBuf.remaining()<toget)
+            toget=upgradeBuf.remaining();
 
-        //for(int i=0x0800c000;buf.hasRemaining(); i+=toget){
-            //Grab 1024 bytes or the remainder of the buffer.
+        try {
+            upgradeBuf.get(block, 0, toget);
+        }catch(BufferUnderflowException e){
+            //We don't care about an underflow, just write what we've got.
+            Log.e("Mismatch","Ignoring a BufferUnderflowException");
+        }
 
-            if(upgradeBuf.remaining()<toget)
-                toget=upgradeBuf.remaining();
-
-            try {
-                upgradeBuf.get(block, 0, toget);
-            }catch(BufferUnderflowException e){
-                //We don't care about an underflow, just write what we've got.
-                Log.e("Mismatch","Ignoring a BufferUnderflowException");
-            }
-
-            //Write it to the MD380's flash, starting with blockadr=2.
-            setAddress(upgradeAddress);
-            int adr=2; //(i-0x0800C000)/1024+2;
-            download(adr, block);
+        //Write it to the MD380's flash, starting with blockadr=2.
+        setAddress(upgradeAddress);
+        int adr=2; //(i-0x0800C000)/1024+2;
+        download(adr, block);
 
         upgradeAddress=upgradeAddress+toget;
 
         return !upgradeBuf.hasRemaining();
-        //}
-        //Log.e("Done","Wrote "+upgrade.length+" bytes.");
     }
 }
 

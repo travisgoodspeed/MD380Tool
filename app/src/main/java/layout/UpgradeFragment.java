@@ -45,10 +45,11 @@ public class UpgradeFragment extends Fragment {
         to avoid contention.
      */
     private class UpgradeTask extends AsyncTask<TextView, Integer, Void> {
-        Integer frame=0;
+        Integer frame=1;
         @Override
         protected Void doInBackground(TextView... params) {
             //TextView ti=params[0];
+            publishProgress(0);
 
             //Grab the firmware as a raw resource.
             InputStream ins = getResources().openRawResource(R.raw.firmware);
@@ -68,7 +69,8 @@ public class UpgradeFragment extends Fragment {
             try {
                 while (!isCancelled() && !MainActivity.tool.upgradeApplicationNextStep()) {
                     //The actual work is done in onProgressUpdate() in the UI thread.
-                    publishProgress(frame);
+                    if((frame%10)==0)
+                        publishProgress(frame);
                     frame = frame + 1;
                 }
             }catch(MD380Exception e){
@@ -86,9 +88,10 @@ public class UpgradeFragment extends Fragment {
             Log.d("upgrade",
                     String.format("Upgrade frame %d", params[0]));
 
-            if(frame==0)
+            if(frame==0) {
+                progressBar.setMax(1000);
                 progressBar.setVisibility(View.VISIBLE);
-            else if(frame==-1)
+            }else if(frame==-1)
                 progressBar.setVisibility(View.INVISIBLE);
             progressBar.setProgress(frame);
         }
