@@ -271,7 +271,6 @@ public class MD380DFU {
         while(!upgradeApplicationNextStep());
     }
 
-    private byte[] upgradeFile=null;
     private ByteBuffer upgradeBuf=null;
     private int upgradeAddress=0;
     public void upgradeApplicationInit(byte[] upgrade) throws MD380Exception{
@@ -280,7 +279,7 @@ public class MD380DFU {
             Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not 994816.  Aborting.");
             return;
         }
-        upgradeFile=upgrade;
+        //upgradeFile=upgrade;
 
         //Enter programming mode and select flash memory.
         md380cmd((byte) 0x91, (byte) 0x01);
@@ -292,7 +291,7 @@ public class MD380DFU {
             eraseBlock(i);
 
         //Write in the new application.
-        upgradeBuf=ByteBuffer.wrap(upgradeFile);
+        upgradeBuf=ByteBuffer.wrap(upgrade);
         int blocksize=1024;
         byte[] block=new byte[blocksize];
 

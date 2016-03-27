@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity
 
                                     tool.drawText("Done!",160,50);
                                     */
-
                                 } else {
                                     //textInfo.setText("Failed to connect.");
                                 }
