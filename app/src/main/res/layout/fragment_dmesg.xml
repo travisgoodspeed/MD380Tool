@@ -28,14 +28,5 @@
                 android:id="@+id/txt_dmesg"/>
         </ScrollView>
 
-
-        <!-- Used to be manually fetched.  No longer needed.
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fetch DMESG"
-            android:id="@+id/but_dmesg"
-            android:layout_gravity="right" />
-        -->
     </LinearLayout>
 </FrameLayout>

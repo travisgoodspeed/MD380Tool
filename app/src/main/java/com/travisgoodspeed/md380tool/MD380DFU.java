@@ -266,12 +266,21 @@ public class MD380DFU {
     /* This function performs a complete upgrade.  For obvious reasons, it oughtn't run
        inside the rendering thread, and you oughtn't run other
      */
-    public void upgradeApplication(byte[] upgrade) throws MD380Exception{
+    public void upgradeApplication(byte[] upgrade) throws MD380Exception {
+        upgradeApplicationInit(upgrade);
+        while(!upgradeApplicationNextStep());
+    }
+
+    private byte[] upgradeFile=null;
+    private ByteBuffer upgradeBuf=null;
+    private int upgradeAddress=0;
+    public void upgradeApplicationInit(byte[] upgrade) throws MD380Exception{
         //Check the filesize.
         if(upgrade.length!=994816){
             Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not 994816.  Aborting.");
             return;
         }
+        upgradeFile=upgrade;
 
         //Enter programming mode and select flash memory.
         md380cmd((byte) 0x91, (byte) 0x01);
@@ -279,41 +288,62 @@ public class MD380DFU {
 
         //Erase the old application.
         eraseBlock(0x0800c000);
+
+        /* We used to erase the remaining blocks here, but we'll do
+            it later, as we write each of them.
+
         for(int i=0x08010000; i<0x080f0000; i+=0x10000)
             eraseBlock(i);
-
+        */
 
         //Write in the new application.
-        ByteBuffer buf=ByteBuffer.wrap(upgrade);
+        upgradeBuf=ByteBuffer.wrap(upgradeFile);
+        int blocksize=1024;
+        byte[] block=new byte[blocksize];
+
+        //Point at the beginning of flash.
+        upgradeAddress=0x0800c000;
+        setAddress(0x0800c000);
+
+        //Skip file header, which begins with "OutSecurityBin"
+        upgradeBuf.get(block, 0, 0x100);
+    }
+
+    /* Performs an upgrade step, returning true when the upgrade has been completed. */
+    public boolean upgradeApplicationNextStep() throws MD380Exception{
         int blocksize=1024;
         int toget=1024;
         byte[] block=new byte[blocksize];
 
-        //Point at the beginning of flash.
-        setAddress(0x0800c000);
+        //Erase the block if we're starting a new one.
+        //This used to be done prior to the start of the upgrade.
+        if((upgradeAddress&0xFFFF)==0)
+            eraseBlock(upgradeAddress);
 
-        //Skip file header, which begins with "OutSecurityBin"
-        buf.get(block, 0, 0x100);
 
-        for(int i=0x0800c000;buf.hasRemaining(); i+=toget){
+        //for(int i=0x0800c000;buf.hasRemaining(); i+=toget){
             //Grab 1024 bytes or the remainder of the buffer.
 
-            if(buf.remaining()<toget)
-                toget=buf.remaining();
+            if(upgradeBuf.remaining()<toget)
+                toget=upgradeBuf.remaining();
 
             try {
-                buf.get(block, 0, toget);
+                upgradeBuf.get(block, 0, toget);
             }catch(BufferUnderflowException e){
                 //We don't care about an underflow, just write what we've got.
                 Log.e("Mismatch","Ignoring a BufferUnderflowException");
             }
 
             //Write it to the MD380's flash, starting with blockadr=2.
-            setAddress(i);
+            setAddress(upgradeAddress);
             int adr=2; //(i-0x0800C000)/1024+2;
             download(adr, block);
-        }
-        Log.e("Done","Wrote "+upgrade.length+" bytes.");
+
+        upgradeAddress=upgradeAddress+toget;
+
+        return !upgradeBuf.hasRemaining();
+        //}
+        //Log.e("Done","Wrote "+upgrade.length+" bytes.");
     }
 }
 

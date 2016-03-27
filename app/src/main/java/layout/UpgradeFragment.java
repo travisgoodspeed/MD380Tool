@@ -2,6 +2,7 @@ package layout;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.travisgoodspeed.md380tool.MD380Exception;
+import com.travisgoodspeed.md380tool.MD380Tool;
 import com.travisgoodspeed.md380tool.MainActivity;
 import com.travisgoodspeed.md380tool.R;
 
@@ -37,6 +40,65 @@ public class UpgradeFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    /* This task grabs the dmesg at regular intervals, in the main thread
+        to avoid contention.
+     */
+    private class UpgradeTask extends AsyncTask<TextView, Integer, Void> {
+        Integer frame=0;
+        @Override
+        protected Void doInBackground(TextView... params) {
+            //TextView ti=params[0];
+
+            //Grab the firmware as a raw resource.
+            InputStream ins = getResources().openRawResource(R.raw.firmware);
+            byte firmware[]=new byte[994816];
+            try {
+                ins.read(firmware);
+                MainActivity.tool.upgradeApplicationInit(firmware);
+            }catch(IOException e){
+                e.printStackTrace();
+                return null;
+            }catch(MD380Exception e){
+                e.printStackTrace();
+                return null;
+            }
+
+            //Run until we're cancelled.
+            try {
+                while (!isCancelled() && !MainActivity.tool.upgradeApplicationNextStep()) {
+                    //The actual work is done in onProgressUpdate() in the UI thread.
+                    publishProgress(frame);
+                    frame = frame + 1;
+                }
+            }catch(MD380Exception e){
+                e.printStackTrace();
+            }
+
+            publishProgress(-1);
+            return null;
+        }
+
+        protected void onProgressUpdate(Integer... params){
+            //final TextView textInfo = (TextView) view.findViewById(R.id.txt_dmesg);
+
+            Integer frame=params[0];
+            Log.d("upgrade",
+                    String.format("Upgrade frame %d", params[0]));
+
+            if(frame==0)
+                progressBar.setVisibility(View.VISIBLE);
+            else if(frame==-1)
+                progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setProgress(frame);
+        }
+        protected void onPostExecute(String result){
+            progressBar.setVisibility(View.INVISIBLE);
+            Log.d("upgrade","The upgrade task has completed.");
+        }
+
+    }
+    UpgradeTask bgtask=null;
 
     public UpgradeFragment() {
         // Required empty public constructor
@@ -69,6 +131,8 @@ public class UpgradeFragment extends Fragment {
         }
     }
 
+    ProgressBar progressBar=null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,24 +140,17 @@ public class UpgradeFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_upgrade, container, false);
 
         Button btnCheck = (Button) v.findViewById(R.id.but_upgrade);
+        progressBar=(ProgressBar) v.findViewById(R.id.pbar_upgrade);
         btnCheck.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                //getPermissions();
-                try {
-                    //Grab the firmware as a raw resource.
-                    InputStream ins = getResources().openRawResource(R.raw.firmware);
-                    byte firmware[]=new byte[994816];
-                    ins.read(firmware);
-
-
-                    //Install the firmware.  This should be done in another thread.
-                    MainActivity.tool.upgradeApplication(firmware);
-                }catch(MD380Exception e){
-                    e.printStackTrace();
-                }catch(IOException e){
-                    e.printStackTrace();
+                //Install the firmware in a background thread.
+                if(bgtask==null && MainActivity.tool!=null && MainActivity.tool.isConnected()) {
+                    bgtask = new UpgradeTask();
+                    bgtask.execute();
+                }else{
+                    Log.d("dmesg","bgtask!=null at onAttach()!");
                 }
             }
         });
