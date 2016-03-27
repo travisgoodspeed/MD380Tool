@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentManager;
 import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
+import layout.MessagesFragment;
 import layout.UpgradeFragment;
 
 
@@ -45,7 +46,7 @@ import layout.UpgradeFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener, UpgradeFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener, UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener{
     //Button btnCheck;
     //TextView textInfo;
 
@@ -231,7 +232,12 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
 
         Class fragmentClass;
-        switch(item.getItemId()) {
+
+        //Only allow new tabs if the connection exists.
+        if(tool==null || !tool.isConnected()){
+            fragmentClass = HomeFragment.class;
+            Log.w("Nav", "Forcing home for broken connection.");
+        }else switch(item.getItemId()) {
             case R.id.nav_manage:
                 fragmentClass = HomeFragment.class;
                 Log.w("Nav", "Home fragment.");
@@ -243,6 +249,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_dmesg:
                 fragmentClass = DmesgFragment.class;
                 Log.w("Nav", "Dmesg fragment.");
+                break;
+            case R.id.nav_messages:
+                fragmentClass = MessagesFragment.class;
+                Log.w("Nav", "Messages fragment.");
                 break;
             case R.id.nav_upgrade:
                 fragmentClass = UpgradeFragment.class;
@@ -261,14 +271,6 @@ public class MainActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        /*
-        if (id == R.id.nav_manage) {
-            Log.w("myApp", "manage");
-        } else if (id == R.id.nav_log) {
-            Log.w("myApp", "log");
-        }
-        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

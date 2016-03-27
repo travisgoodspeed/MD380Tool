@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     tools:context="layout.UpgradeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
         android:orientation="vertical"

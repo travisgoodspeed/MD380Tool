@@ -12,9 +12,14 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Call Log" />
         <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Messages" />
+        <item
             android:id="@+id/nav_dmesg"
             android:icon="@drawable/ic_menu_manage"
             android:title="Dmesg Log" />
+
         <item
             android:id="@+id/nav_upgrade"
             android:icon="@drawable/ic_menu_manage"
