@@ -89,7 +89,7 @@ public class LogFragment extends Fragment {
                     else
                         Log.e("textInfo","textInfo==null.  WTF?");
 
-                    tool.drawText("Done!",160,50);
+                    //tool.drawText("Done!",160,50);
                 } else {
                     textInfo.setText("Failed to connect.");
                 }

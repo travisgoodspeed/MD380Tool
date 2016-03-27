@@ -19,7 +19,7 @@ public class MD380Tool extends MD380DFU {
         byte buf[];
         int len=0;
 
-        buf=new byte[text.length()*2+3];
+        buf=new byte[text.length()*2+4];
 
         buf[0]=(byte) 0x80;  //DrawText Command
         buf[1]=(byte) x;
@@ -83,7 +83,7 @@ public class MD380Tool extends MD380DFU {
         int toret[]=new int[3];
 
 
-        Log.d("getCallLog",String.format("Got %d bytes.",log.length));
+        //Log.d("getCallLog",String.format("Got %d bytes.",log.length));
 
         toret[0]=intfrombytes(log,0);
         toret[1]=intfrombytes(log,4);
