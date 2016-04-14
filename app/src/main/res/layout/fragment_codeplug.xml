@@ -1,0 +1,54 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="layout.CodeplugFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_codeplug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:layout_gravity="center_horizontal|top"
+            android:text="This codeplug editor isn't yet functional, but someday soon it might let you edit your codeplug.  For now, writing back to the device is disabled,
+so you probably can't hurt anything."/>
+    </ScrollView>
+
+    <!--Invisible to start, but we'll show it during reading and writing.-->
+    <ProgressBar
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pbar_codeplug"
+        android:visibility="invisible"
+        android:layout_gravity="center" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read Codeplug"
+        android:id="@+id/but_upload_codeplug"
+        android:layout_gravity="center_horizontal|bottom" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Write Codeplug"
+        android:id="@+id/but_download_codeplug"
+        android:visibility="invisible"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    </LinearLayout>
+
+</FrameLayout>

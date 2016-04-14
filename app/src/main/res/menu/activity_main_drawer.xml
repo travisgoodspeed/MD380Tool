@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <item android:title="Connection">
+        <menu>
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Connection" />
+            android:title="Connect" />
+        <item
+            android:id="@+id/nav_upgrade"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Upgrade Firmware" />
+        </menu>
+    </item>
+
+    <item android:title="Codeplug">
+        <menu>
+            <item
+                android:id="@+id/nav_codeplug"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Codeplug Up/Download" />
+            <item
+                android:id="@+id/nav_contacts"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Contacts" />
+            <item
+                android:id="@+id/nav_channels"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Channels" />
+            <item
+                android:id="@+id/nav_zones"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Zones" />
+        </menu>
+    </item>
+
+    <item android:title="Logs">
+        <menu>
 
         <item
             android:id="@+id/nav_log"
             android:icon="@drawable/ic_menu_manage"
             android:title="Call Log" />
+
         <item
             android:id="@+id/nav_messages"
             android:icon="@drawable/ic_menu_manage"
             android:title="Messages" />
+
         <item
             android:id="@+id/nav_dmesg"
             android:icon="@drawable/ic_menu_manage"
             android:title="Dmesg Log" />
-
-        <item
-            android:id="@+id/nav_upgrade"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Upgrade Firmware" />
-    </group>
-
-    <!--
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
         </menu>
     </item>
-    -->
+
+
 
 </menu>

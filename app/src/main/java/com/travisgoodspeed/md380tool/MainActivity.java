@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
@@ -38,6 +39,8 @@ import layout.UpgradeFragment;
 
 /**
  * Created by tgoodspeed on 2/19/16.
+ *
+ * This is the main activity window for all MD380 interactions on Android.
  */
 
 
@@ -46,7 +49,11 @@ import layout.UpgradeFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener, UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
+        UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener,
+        CodeplugFragment.OnFragmentInteractionListener
+
+{
     //Button btnCheck;
     //TextView textInfo;
 
@@ -54,28 +61,21 @@ public class MainActivity extends AppCompatActivity
     public static MD380Tool tool=null;
     //This is ugly, but so it goes.
     public static MainActivity selfy=null;
+    //Codeplug database.
+    public static MD380CodeplugDB db=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         //Record our static handle for the other views.
         selfy=this;
+        if(db==null)
+            db=new MD380CodeplugDB(this.getApplicationContext());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -101,21 +101,6 @@ public class MainActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        // old stuff
-        /*
-        btnCheck = (Button) findViewById(R.id.check);
-        textInfo = (TextView) findViewById(R.id.info);
-        btnCheck.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                getPermissions();
-
-            }
-        });
-        */
-
     }
 
     private final String ACTION_USB_PERMISSION="com.travisgoodspeed.md380tool.USB_INTENT";
@@ -131,18 +116,7 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 //if(tool==null)
                                 tool = new MD380Tool((UsbManager) getSystemService(Context.USB_SERVICE));
-                                if (tool.connect()) {
-                                    //TODO Check to see what sort of device we're connected to.
-                                    /*
-                                    int[] log=tool.getCallLog();
-                                    //textInfo.setText(String.format("DMR call from %d to %d.\n",
-                                    //        log[1], log[2])+textInfo.getText());
-
-                                    tool.drawText("Done!",160,50);
-                                    */
-                                } else {
-                                    //textInfo.setText("Failed to connect.");
-                                }
+                                tool.connect();
                             }catch(MD380Exception e){
                                 Log.e("MD380",e.getMessage());
                                 e.printStackTrace();
@@ -230,16 +204,26 @@ public class MainActivity extends AppCompatActivity
         // position
         Fragment fragment = null;
 
-        Class fragmentClass;
+        Class fragmentClass=null;
 
-        //Only allow new tabs if the connection exists.
-        if(tool==null || !tool.isConnected()){
-            fragmentClass = HomeFragment.class;
-            Log.w("Nav", "Forcing home for broken connection.");
-        }else switch(item.getItemId()) {
+        //Panes which do not require a connection.
+        switch(item.getItemId()){
             case R.id.nav_manage:
                 fragmentClass = HomeFragment.class;
                 Log.w("Nav", "Home fragment.");
+                break;
+        }
+
+        //Only allow new tabs if the connection exists.
+        if(fragmentClass==null && (tool==null || !tool.isConnected())){
+            fragmentClass = HomeFragment.class;
+            Log.w("Nav", "Forcing home for broken connection.");
+        }
+
+        if(fragmentClass==null) switch(item.getItemId()) {
+            case R.id.nav_codeplug:
+                fragmentClass = CodeplugFragment.class;
+                Log.w("Nav", "Codeplug fragment.");
                 break;
             case R.id.nav_log:
                 fragmentClass = LogFragment.class;
@@ -274,10 +258,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    void doConnect(View view){
-
     }
 
     @Override

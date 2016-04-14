@@ -6,15 +6,11 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.hardware.usb.UsbConfiguration;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import android.content.Context;
-import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
@@ -68,7 +64,6 @@ public class MD380DFU {
 
                 //Open the device.
                 connection=manager.openDevice(device);
-
 
                 Log.d("MD380","Trying to open interface on 0");
                 usbInterface = device.getInterface(0);
@@ -130,7 +125,7 @@ public class MD380DFU {
         buf[4]=(byte) ((address>>24)&0xFF);
 
 
-        download(0,buf);
+        download(0, buf);
 
         return;
     }
@@ -146,6 +141,9 @@ public class MD380DFU {
     /* Uploads data from the radio at the target address. */
     public byte[] upload(int block, int length) throws MD380Exception{
         byte[] data=new byte[length];
+
+        //Log.d("dfu","Uploading block "+block+" of length "+length);
+
         if(connection.controlTransfer(0xA1,UPLOAD,block,0,data,length,3000)<0) {
             connected=false;
             throw new MD380Exception("Transfer Error");
@@ -159,7 +157,17 @@ public class MD380DFU {
     /* Gets the command response. */
     byte[] getCommand() throws MD380Exception{
         /* The command block comes from block zero.  The size is always 32. */
-        return upload(0,32);
+        //byte[] toret=upload(0, 5);
+        byte[] toret=upload(0, 5);
+        Log.d("getCommand()", "Status of " + bytes2hexstr(toret));
+        return toret;
+
+    }
+
+    /* Aborts the current transaction. */
+    public void abort() throws MD380Exception{
+        byte data[]=null;
+        connection.controlTransfer(0x21, ABORT, 0, 0, data,0, 3000);
     }
 
     /* Downloads data to a target block. */
@@ -169,7 +177,12 @@ public class MD380DFU {
             throw new MD380Exception("Transfer Error");
         //First we apply the change.
         getStatus();
-
+        /*
+        try{
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
         //Then we return the result.
         return getStatus();
     }
@@ -179,7 +192,9 @@ public class MD380DFU {
         byte data[]=new byte[2];
         data[0]=a;
         data[1]=b;
-        download(0,data);
+        byte[] res;
+        res = download(0, data);
+        //Log.d("md380cmd",": " +res[2]);
     }
 
     /* Reboots the radio. */
@@ -191,6 +206,26 @@ public class MD380DFU {
     public void programMode() throws MD380Exception{
         //This is one of the custom commands in the 91 series.
         md380cmd((byte) 0x91, (byte) 0x01);
+    }
+
+    /* Enters into DFU Mode. */
+    public void enterDfuMode() throws MD380Exception{
+        while(true) {
+            int state = getState();
+            switch(state){
+                case 2://dfuIDLE
+                    return;//We're done!
+                case 5://DNLOAD_IDLE
+                case 3://DNLOAD_SYNC
+                case 6://MANIFEST SYNC
+                case 9://UPLOAD IDLE
+                    abort();
+                    break;
+                default:
+                    Log.d("enterDfuMode()","Unhandled state "+state);
+
+            }
+        }
     }
 
     //Convenience function that hexdumps some data.
@@ -240,13 +275,6 @@ public class MD380DFU {
         return j;
     }
 
-    /* This function begins an upgrade by instructing the target radio
-       to enter the appropriate mode.
-     */
-    public void startUpgrade(){
-
-    }
-
     /* Erases a block, and by side effect sets the target address. */
     public void eraseBlock(int address) throws MD380Exception{
         byte buf[]=new byte[5];
@@ -271,6 +299,65 @@ public class MD380DFU {
         while(!upgradeApplicationNextStep());
     }
 
+    private ByteBuffer codeplugBuf=null;
+    public MD380Codeplug uploadCodeplug(){
+        MD380Codeplug codeplug=null;
+
+        codeplugBuf=ByteBuffer.allocate(262144);
+        try {
+            //Enter DFU Mode
+            enterDfuMode();
+            //Enter programming mode and select SPI memory.
+            md380cmd((byte) 0x91, (byte) 0x01);//Programming mode.
+            md380cmd((byte) 0xa2, (byte) 0x02);
+            //getStatus();
+            //getCommand();
+            md380cmd((byte) 0xa2, (byte) 0x02);
+            md380cmd((byte) 0xa2, (byte) 0x03);
+            md380cmd((byte) 0xa2, (byte) 0x04);
+            md380cmd((byte) 0xa2, (byte) 0x07);
+
+            //Move to the beginning of the codeplug.
+            setAddress(0x00000000);
+            enterDfuMode();
+
+            int blocksize=1024;
+            for(int blockadr=2;blockadr<0x102;blockadr++){
+                byte[] data=upload(blockadr,blocksize);
+                //Log.d("Codeplug","Got "+data.length+" bytes of the codeplug.");
+                //getStatus();
+                if(data.length!=blocksize){
+                    Log.e("Codeplug","Block was "+data.length+" bytes.  Should have been "+blocksize+".");
+                    return null;
+                }
+                codeplugBuf.put(data.clone());
+            }
+
+            //Now dump the buffer.
+            byte codeplugData[]=new byte[262144];
+            //codeplugBuf.get(codeplugData,0,262144);
+            codeplugBuf.rewind();
+            codeplugBuf.get(codeplugData);
+
+            codeplug=new MD380Codeplug(codeplugData);
+        } catch (MD380Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return codeplug;
+    }
+
+    public void downloadCodeplug(MD380Codeplug codeplug){
+        byte[] data=codeplug.getImage();
+        if(data.length!=262144){
+            Log.e("Codeplug","Refusing to send a codeplug of "+data.length+" bytes.");
+        }
+
+        Log.e("Codeplug","Refusing to send a codeplug because I don't know what the hell I'm doing.");
+
+        return;
+    }
+
     private ByteBuffer upgradeBuf=null;
     private int upgradeAddress=0;
     public void upgradeApplicationInit(byte[] upgrade) throws MD380Exception{
@@ -279,7 +366,6 @@ public class MD380DFU {
             Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not 994816.  Aborting.");
             return;
         }
-        //upgradeFile=upgrade;
 
         //Enter programming mode and select flash memory.
         md380cmd((byte) 0x91, (byte) 0x01);
@@ -301,6 +387,7 @@ public class MD380DFU {
 
         //Skip file header, which begins with "OutSecurityBin"
         upgradeBuf.get(block, 0, 0x100);
+        
     }
 
     /* Performs an upgrade step, returning true when the upgrade has been completed. */
@@ -308,7 +395,6 @@ public class MD380DFU {
         int blocksize=1024;
         int toget=1024;
         byte[] block=new byte[blocksize];
-
 
         if(upgradeBuf.remaining()<toget)
             toget=upgradeBuf.remaining();

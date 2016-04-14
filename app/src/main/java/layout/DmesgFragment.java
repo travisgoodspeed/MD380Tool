@@ -65,8 +65,11 @@ public class DmesgFragment extends Fragment {
 
         protected void onProgressUpdate(Integer... params){
             //final TextView textInfo = (TextView) view.findViewById(R.id.txt_dmesg);
+
+            /*
             Log.d("dmesgfetcher",
                     String.format("Fetched Dmesg frame %d",params[0]));
+                    */
             MD380Tool tool= MainActivity.tool;
             try {
                 if (tool!=null && tool.isConnected()) {
