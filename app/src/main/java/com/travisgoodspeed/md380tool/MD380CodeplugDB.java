@@ -1,5 +1,6 @@
 package com.travisgoodspeed.md380tool;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -70,15 +71,21 @@ public class MD380CodeplugDB {
         db.execSQL(SQL_CREATE_ENTRIES);
 
         //Populate the tables.
-        Log.d("CodeplugDB", "Travis is too lazy to compose this.");
+        Log.d("CodeplugDB", "Inserting Contacts");
         for(int i=1;i<=1000;i++){
             MD380Contact c=codeplug.getContact(i);
             if(c!=null){
-                //Holy shit is this vulnerable and ugly.
-                //Fix it before adding any others.
-                db.execSQL("insert into contacts(llid, flag, name) values ("+c.llid+","+((int) c.flags&0xFF)+",'"+c.nom+"');");
+                ContentValues values=new ContentValues(3);
+                values.put("llid",c.llid);
+                values.put("flag",c.flags);
+                values.put("name",c.nom);
+                db.insert("contacts",
+                        null,
+                        values);
             }
         }
+
+
         Cursor c=db.rawQuery("select count(*) from contacts",null);
         c.moveToFirst();
         Log.d("CodeplugDB","Inserted "+c.getString(0)+" rows of contacts.");
