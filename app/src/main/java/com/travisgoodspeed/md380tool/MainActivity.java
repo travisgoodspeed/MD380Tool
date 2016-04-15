@@ -29,6 +29,8 @@ import android.view.MenuItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.travisgoodspeed.md380tool.dummy.DummyContent;
+
 import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
@@ -51,7 +53,7 @@ import layout.UpgradeFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
         UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener,
-        CodeplugFragment.OnFragmentInteractionListener
+        CodeplugFragment.OnFragmentInteractionListener, ContactFragment.OnListFragmentInteractionListener
 
 {
     //Button btnCheck;
@@ -212,6 +214,10 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = HomeFragment.class;
                 Log.w("Nav", "Home fragment.");
                 break;
+            case R.id.nav_contacts:
+                fragmentClass = ContactFragment.class;
+                Log.w("Nav", "Contact fragment.");
+                break;
         }
 
         //Only allow new tabs if the connection exists.
@@ -263,5 +269,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.d("Huh","Some misunderstood interaction with "+uri);
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        Log.d("MainActivity","I probably should handle onListFragmentInteraction better.");
     }
 }

@@ -56,7 +56,7 @@ public class MD380Codeplug {
             if(c!=0 && c!=0xFF)
                 s=s+c;
             i=i+2;
-        }while(c!=00 && adr-i<maxlen);
+        }while(c!=00 && s.length()<(maxlen/2));
 
         //Return null for an empty string, or the string itself.
         if(s.length()==0)
@@ -99,7 +99,7 @@ public class MD380Codeplug {
 
         i=i-1;//1 indexing
 
-        MD380Contact c=new MD380Contact(this,0x5f80+36*i);
+        MD380Contact c=new MD380Contact(this,i);
         if(c.nom==null)
             return null;
 

@@ -24,14 +24,14 @@ public class MD380CodeplugDB {
     MD380Codeplug codeplug=null;
     SQLiteDatabase db=null;
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE CONTACTS(LLID, FLAG, NAME);";
+            "CREATE TABLE CONTACTS(id, llid, flag, name);";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS CONTACTS";
 
     public class CodeplugDbHelper extends SQLiteOpenHelper {
         //If you change the schema, increment the database version.
-        public static final int DATABASE_VERSION = 1;
+        public static final int DATABASE_VERSION = 2;
         public static final String DATABASE_NAME = "md380codeplug.db";
 
 
@@ -76,6 +76,7 @@ public class MD380CodeplugDB {
             MD380Contact c=codeplug.getContact(i);
             if(c!=null){
                 ContentValues values=new ContentValues(3);
+                values.put("id",c.id);
                 values.put("llid",c.llid);
                 values.put("flag",c.flags);
                 values.put("name",c.nom);
@@ -85,14 +86,29 @@ public class MD380CodeplugDB {
             }
         }
 
+        Log.d("CodeplugDB","Inserted "+getContactCount()+" rows of contacts.");
 
-        Cursor c=db.rawQuery("select count(*) from contacts",null);
-        c.moveToFirst();
-        Log.d("CodeplugDB","Inserted "+c.getString(0)+" rows of contacts.");
 
         //Write the codeplug image to disk, so it's consistent for the next load.
         writeCodeplug();
     }
+
+    /* Returns the number of contacts. */
+    public int getContactCount(){
+        Cursor c=db.rawQuery("select count(*) from contacts",null);
+        c.moveToFirst();
+        return c.getInt(0);
+    }
+    /* Returns the name of a contact. */
+    public MD380Contact getContact(int adr){
+        Cursor c=db.rawQuery("select id, llid, flag, name from contacts where id="+adr,null);
+        //Cursor c=db.rawQuery("select 1 as id, 42 as llid, 0 as flag, 'dude' as name;",null);
+        if(c.moveToFirst())
+            return new MD380Contact(c);
+        else
+            return null;
+    }
+
     public void writeCodeplug(){
         FileOutputStream fos;
         try{
