@@ -10,10 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.travisgoodspeed.md380tool.dummy.DummyContent;
-import com.travisgoodspeed.md380tool.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import com.travisgoodspeed.md380tool.content.ContactContent;
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +18,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ContactFragment extends Fragment {
+public class ContactsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -33,13 +30,13 @@ public class ContactFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ContactFragment() {
+    public ContactsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ContactFragment newInstance(int columnCount) {
-        ContactFragment fragment = new ContactFragment();
+    public static ContactsFragment newInstance(int columnCount) {
+        ContactsFragment fragment = new ContactsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -69,7 +66,7 @@ public class ContactFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyContactRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyContactRecyclerViewAdapter(ContactContent.ITEMS, mListener));
         }
         return view;
     }
@@ -103,7 +100,6 @@ public class ContactFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(MD380Contact item);
     }
 }

@@ -12,7 +12,6 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.content.Context;
 
 
@@ -28,8 +27,6 @@ import android.view.MenuItem;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-
-import com.travisgoodspeed.md380tool.dummy.DummyContent;
 
 import layout.CodeplugFragment;
 import layout.DmesgFragment;
@@ -53,7 +50,7 @@ import layout.UpgradeFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
         UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener,
-        CodeplugFragment.OnFragmentInteractionListener, ContactFragment.OnListFragmentInteractionListener
+        CodeplugFragment.OnFragmentInteractionListener, ContactsFragment.OnListFragmentInteractionListener
 
 {
     //Button btnCheck;
@@ -215,8 +212,8 @@ public class MainActivity extends AppCompatActivity
                 Log.w("Nav", "Home fragment.");
                 break;
             case R.id.nav_contacts:
-                fragmentClass = ContactFragment.class;
-                Log.w("Nav", "Contact fragment.");
+                fragmentClass = ContactsFragment.class;
+                Log.w("Nav", "Contacts fragment.");
                 break;
         }
 
@@ -272,7 +269,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        Log.d("MainActivity","I probably should handle onListFragmentInteraction better.");
+    public void onListFragmentInteraction(MD380Contact item) {
+        Log.d("MainActivity","TODO Implement a contact viewer/editor.");
     }
 }

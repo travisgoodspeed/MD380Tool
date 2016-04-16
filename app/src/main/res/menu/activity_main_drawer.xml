@@ -25,6 +25,10 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="Contacts" />
             <item
+                android:id="@+id/nav_rxgroups"
+                android:icon="@drawable/ic_menu_send"
+                android:title="RX Groups" />
+            <item
                 android:id="@+id/nav_channels"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Channels" />
@@ -32,6 +36,11 @@
                 android:id="@+id/nav_zones"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Zones" />
+
+            <item
+                android:id="@+id/nav_scanlists"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Scan Lists" />
         </menu>
     </item>
 
@@ -55,6 +64,18 @@
         </menu>
     </item>
 
+    <item android:title="DMR MARC">
+        <menu>
+            <item
+                android:id="@+id/nav_marcusers"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="User DB" />
+            <item
+                android:id="@+id/nav_marcrepeaters"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Repeater DB" />
+        </menu>
+    </item>
 
 
 </menu>

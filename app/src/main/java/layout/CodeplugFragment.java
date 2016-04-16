@@ -93,8 +93,6 @@ public class CodeplugFragment extends Fragment {
                 Log.d("Codeplug", "I should be fetching the codeplug.");
                 MD380Codeplug cp=MainActivity.tool.uploadCodeplug();
                 if(cp!=null) {
-                    //Print it for the hell of things.
-                    //cp.printCodeplug();
                     //Update the database.
                     MainActivity.db.importCodeplug(cp);
                 }

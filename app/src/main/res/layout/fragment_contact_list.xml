@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.travisgoodspeed.md380tool.ContactFragment"
+    tools:context=".ContactsFragment"
     tools:listitem="@layout/fragment_contact" />
