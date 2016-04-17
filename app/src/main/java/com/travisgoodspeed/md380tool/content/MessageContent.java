@@ -1,6 +1,6 @@
 package com.travisgoodspeed.md380tool.content;
 
-import com.travisgoodspeed.md380tool.MD380Contact;
+import com.travisgoodspeed.md380tool.MD380Message;
 import com.travisgoodspeed.md380tool.MainActivity;
 
 import java.util.ArrayList;
@@ -9,39 +9,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Helper class for providing MD380 contacts to the listview.
+ * Helper class for providing message content.
  */
-public class ContactContent {
+public class MessageContent {
 
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<MD380Contact> ITEMS = new ArrayList<MD380Contact>();
+    public static final List<MD380Message> ITEMS = new ArrayList<MD380Message>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, MD380Contact> ITEM_MAP = new HashMap<String, MD380Contact>();
-
-    //private static final int COUNT = 999;
+    public static final Map<String, MD380Message> ITEM_MAP = new HashMap<String, MD380Message>();
 
     static {
-        int count = MainActivity.db.getContactCount();
         // Add some sample items.
+        int count= MainActivity.db.getMessageCount();
         for (int i = 1; i <= count; i++) {
-            addItem(createContact(i));
+            addItem(createMessage(i));
         }
     }
 
-    private static void addItem(MD380Contact item) {
-        if(item==null) return;
+    private static void addItem(MD380Message item) {
         ITEMS.add(item);
         ITEM_MAP.put(""+item.id, item);
     }
 
-    private static MD380Contact createContact(int position) {
-        MD380Contact contact=MainActivity.db.getContact(position);
-        return contact;
+    private static MD380Message createMessage(int position) {
+        return MainActivity.db.getMessage(position);
     }
 
     private static String makeDetails(int position) {
@@ -52,4 +48,5 @@ public class ContactContent {
         }
         return builder.toString();
     }
+
 }

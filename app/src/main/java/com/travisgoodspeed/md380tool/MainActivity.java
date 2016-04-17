@@ -33,7 +33,6 @@ import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
-import layout.MessagesFragment;
 import layout.UpgradeFragment;
 
 
@@ -50,8 +49,10 @@ import layout.UpgradeFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
-        UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener,
-        CodeplugFragment.OnFragmentInteractionListener, ContactsFragment.OnListFragmentInteractionListener,
+        UpgradeFragment.OnFragmentInteractionListener,
+        CodeplugFragment.OnFragmentInteractionListener,
+        ContactsFragment.OnListFragmentInteractionListener,
+        MessageFragment.OnListFragmentInteractionListener,
         CloneFragment.OnFragmentInteractionListener
 
 {
@@ -214,6 +215,12 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = ContactsFragment.class;
                 Log.w("Nav", "Contacts fragment.");
                 break;
+
+            case R.id.nav_messages:
+                fragmentClass = MessageFragment.class;
+                Log.w("Nav", "Messages fragment.");
+                break;
+
         }
 
         //Only allow new tabs if the connection exists.
@@ -239,12 +246,6 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = DmesgFragment.class;
                 Log.w("Nav", "Dmesg fragment.");
                 break;
-            /*
-            case R.id.nav_messages:
-                fragmentClass = MessagesFragment.class;
-                Log.w("Nav", "Messages fragment.");
-                break;
-                */
             case R.id.nav_upgrade:
                 fragmentClass = UpgradeFragment.class;
                 Log.w("Nav", "Upgrade fragment.");
@@ -276,5 +277,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(MD380Contact item) {
         Log.d("MainActivity","TODO Implement a contact viewer/editor.");
+    }
+    @Override
+    public void onListFragmentInteraction(MD380Message item) {
+        Log.d("MainActivity","TODO Implement a message viewer/editor.");
     }
 }

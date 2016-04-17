@@ -383,8 +383,6 @@ public class MD380DFU {
             setAddress(0x00000000);
             enterDfuMode();
 
-
-            int blocksize=1024;
             int adr=0;
             for(int blockadr=2;blockadr<0x102;blockadr++){
                 //Compose the frame.

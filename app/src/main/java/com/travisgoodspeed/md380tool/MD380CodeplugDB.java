@@ -24,15 +24,20 @@ import java.io.IOException;
 public class MD380CodeplugDB {
     MD380Codeplug codeplug=null;
     SQLiteDatabase db=null;
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE CONTACTS(id, llid, flag, name);";
 
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS CONTACTS";
+    private static final String SQL_CREATE_CONTACTS=
+            "CREATE TABLE CONTACTS(id, llid, flag, name);\n";
+    private static final String SQL_CREATE_MESSAGES =
+            "CREATE TABLE MESSAGES(id, message);";
+
+    private static final String SQL_DELETE_CONTACTS =
+            "DROP TABLE IF EXISTS CONTACTS;";
+    private static final String SQL_DELETE_MESSAGES =
+            "DROP TABLE IF EXISTS MESSAGES;";
 
     public class CodeplugDbHelper extends SQLiteOpenHelper {
         //If you change the schema, increment the database version.
-        public static final int DATABASE_VERSION = 2;
+        public static final int DATABASE_VERSION = 6;
         public static final String DATABASE_NAME = "md380codeplug.db";
 
 
@@ -41,15 +46,20 @@ public class MD380CodeplugDB {
         }
 
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SQL_CREATE_ENTRIES);
+            db.execSQL(SQL_CREATE_CONTACTS);
+            db.execSQL(SQL_CREATE_MESSAGES);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL(SQL_DELETE_ENTRIES);
+            Log.d("CodeplugDB", "Deleting entries to upgrade database.");
+            db.execSQL(SQL_DELETE_CONTACTS);
+            db.execSQL(SQL_DELETE_MESSAGES);
             onCreate(db);
         }
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion){
-            db.execSQL(SQL_DELETE_ENTRIES);
+            Log.d("CodeplugDB", "Deleting entries to downgrade database.");
+            db.execSQL(SQL_DELETE_CONTACTS);
+            db.execSQL(SQL_DELETE_MESSAGES);
             onCreate(db);
         }
     }
@@ -69,8 +79,10 @@ public class MD380CodeplugDB {
 
         Log.d("CodeplugDB", "Dropping and recreating the old tables for the newly imported codeplug.");
         //Wipe the old tables and begin new ones.
-        db.execSQL(SQL_DELETE_ENTRIES);
-        db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(SQL_DELETE_CONTACTS);
+        db.execSQL(SQL_DELETE_MESSAGES);
+        db.execSQL(SQL_CREATE_CONTACTS);
+        db.execSQL(SQL_CREATE_MESSAGES);
 
         //Populate the tables.
         Log.d("CodeplugDB", "Inserting Contacts");
@@ -87,9 +99,21 @@ public class MD380CodeplugDB {
                         values);
             }
         }
+        Log.d("CodeplugDB", "Inserting Messages");
+        for(int i=1;i<=50;i++){
+            String s=codeplug.getMessage(i);
+            if(s!=null){
+                ContentValues values=new ContentValues(1);
+                values.put("id",i);
+                values.put("message",s);
+                db.insert("messages",
+                        null,
+                        values);
+            }
+        }
 
         Log.d("CodeplugDB","Inserted "+getContactCount()+" rows of contacts.");
-
+        Log.d("CodeplugDB","Inserted "+getMessageCount()+" rows of messages.");
 
         //Write the codeplug image to disk, so it's consistent for the next load.
         writeCodeplug();
@@ -101,12 +125,27 @@ public class MD380CodeplugDB {
         c.moveToFirst();
         return c.getInt(0);
     }
-    /* Returns the name of a contact. */
+    /* Returns the number of messages. */
+    public int getMessageCount(){
+        Cursor c=db.rawQuery("select count(*) from messages",null);
+        //Cursor c=db.rawQuery("select 0;",null);
+        c.moveToFirst();
+        return c.getInt(0);
+    }
+    /* Returns a contact. */
     public MD380Contact getContact(int adr){
         Cursor c=db.rawQuery("select id, llid, flag, name from contacts where id="+adr,null);
-        
+
         if(c.moveToFirst())
             return new MD380Contact(c);
+        else
+            return null;
+    }
+    /* Returns a message. */
+    public MD380Message getMessage(int adr){
+        Cursor c=db.rawQuery("select id, message from messages where id="+adr, null);
+        if(c.moveToFirst())
+            return new MD380Message(c);
         else
             return null;
     }

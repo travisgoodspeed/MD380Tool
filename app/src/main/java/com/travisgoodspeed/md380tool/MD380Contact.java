@@ -7,6 +7,11 @@ import android.util.Log;
  * Created by travis on 4/14/16.
  */
 public class MD380Contact{
+    public int id;
+    public int llid;
+    public byte flags;
+    public String nom;
+
     //Constructs a contact from a databse cursor.
     public MD380Contact(Cursor cur){
         try {
@@ -35,7 +40,7 @@ public class MD380Contact{
     }
 
     //Writes the contact back to the codeplug.
-    public void writeback(MD380Codeplug codeplug, int adr){
+    public void writeback(MD380Codeplug codeplug, int idx){
 
     }
 
@@ -47,8 +52,4 @@ public class MD380Contact{
         this.nom=nom;
     }
     */
-    public int id;
-    public int llid;
-    public byte flags;
-    public String nom;
 }

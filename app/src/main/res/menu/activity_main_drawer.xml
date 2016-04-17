@@ -45,12 +45,10 @@
                 android:id="@+id/nav_scanlists"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Scan Lists" />
-        <!--
-        <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Messages" />
-        -->
+            <item
+                android:id="@+id/nav_messages"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Messages" />
         </menu>
     </item>
 
