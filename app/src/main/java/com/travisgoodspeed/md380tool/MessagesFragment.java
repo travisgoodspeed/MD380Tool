@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.travisgoodspeed.md380tool.content.MessageContent;
 
 /**
  * A fragment representing a list of Items.
@@ -18,7 +17,7 @@ import com.travisgoodspeed.md380tool.content.MessageContent;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MessageFragment extends Fragment {
+public class MessagesFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -30,13 +29,13 @@ public class MessageFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MessageFragment() {
+    public MessagesFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static MessageFragment newInstance(int columnCount) {
-        MessageFragment fragment = new MessageFragment();
+    public static MessagesFragment newInstance(int columnCount) {
+        MessagesFragment fragment = new MessagesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -66,7 +65,7 @@ public class MessageFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMessageRecyclerViewAdapter(MessageContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyMessageRecyclerViewAdapter(MainActivity.db.getMessagesList(), mListener));
         }
         return view;
     }

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         UpgradeFragment.OnFragmentInteractionListener,
         CodeplugFragment.OnFragmentInteractionListener,
         ContactsFragment.OnListFragmentInteractionListener,
-        MessageFragment.OnListFragmentInteractionListener,
+        MessagesFragment.OnListFragmentInteractionListener,
         CloneFragment.OnFragmentInteractionListener
 
 {
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_messages:
-                fragmentClass = MessageFragment.class;
+                fragmentClass = MessagesFragment.class;
                 Log.w("Nav", "Messages fragment.");
                 break;
 

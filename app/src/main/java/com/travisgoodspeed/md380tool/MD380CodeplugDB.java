@@ -12,14 +12,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by travis on 4/13/16.
  *
- * This class converts a Codeplug into a SQLite database.  It is not yet functional, but in the
+ * This class converts a Codeplug into a SQLite database.  It is not yet finished, but in the
  * near future it will allow for codeplugs to be edited on the phone and then re-exported
- * to the device.  Unlike the MD380Codeplug class, it obliterates most of the understood portion
- * of the codeplug.
+ * to the device.  Unlike the MD380Codeplug class, it will obliterate most of the understood portion
+ * of the codeplug on export.
  */
 public class MD380CodeplugDB {
     MD380Codeplug codeplug=null;
@@ -132,6 +134,7 @@ public class MD380CodeplugDB {
         c.moveToFirst();
         return c.getInt(0);
     }
+
     /* Returns a contact. */
     public MD380Contact getContact(int adr){
         Cursor c=db.rawQuery("select id, llid, flag, name from contacts where id="+adr,null);
@@ -146,6 +149,17 @@ public class MD380CodeplugDB {
         Cursor c=db.rawQuery("select id, llid, flag, name from contacts;",null);
         return c;
     }
+    /* Returns a List of all contacts. */
+    public List<MD380Contact> getContactsList(){
+        Cursor c=getAllContacts();
+        List<MD380Contact> items = new ArrayList<MD380Contact>();
+
+        if(c.moveToFirst()) do{
+            items.add(new MD380Contact(c));
+        }while(c.moveToNext());
+
+        return items;
+    }
 
     /* Returns a message. */
     public MD380Message getMessage(int adr){
@@ -159,6 +173,17 @@ public class MD380CodeplugDB {
     public Cursor getAllMessages(){
         Cursor c=db.rawQuery("select * from messages;",null);
         return c;
+    }
+    /* Returns a List of all contacts. */
+    public List<MD380Message> getMessagesList(){
+        Cursor c=getAllMessages();
+        List<MD380Message> items = new ArrayList<MD380Message>();
+
+        if(c.moveToFirst()) do{
+            items.add(new MD380Message(c));
+        }while(c.moveToNext());
+
+        return items;
     }
 
     public void readCodeplug(){

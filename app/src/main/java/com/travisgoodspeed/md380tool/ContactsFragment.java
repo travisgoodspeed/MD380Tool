@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.travisgoodspeed.md380tool.content.ContactContent;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -34,7 +32,6 @@ public class ContactsFragment extends Fragment {
     }
 
     // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static ContactsFragment newInstance(int columnCount) {
         ContactsFragment fragment = new ContactsFragment();
         Bundle args = new Bundle();
@@ -66,7 +63,7 @@ public class ContactsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyContactRecyclerViewAdapter(ContactContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyContactRecyclerViewAdapter(MainActivity.db.getContactsList(), mListener));
         }
         return view;
     }
