@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class MD380CodeplugDB {
         this.context=context;
         CodeplugDbHelper helper=new CodeplugDbHelper(context);
         db=helper.getWritableDatabase();
+        readCodeplug();
     }
 
     /* This imports a codeplug file into the SQLite database. */
@@ -102,13 +104,27 @@ public class MD380CodeplugDB {
     /* Returns the name of a contact. */
     public MD380Contact getContact(int adr){
         Cursor c=db.rawQuery("select id, llid, flag, name from contacts where id="+adr,null);
-        //Cursor c=db.rawQuery("select 1 as id, 42 as llid, 0 as flag, 'dude' as name;",null);
+        
         if(c.moveToFirst())
             return new MD380Contact(c);
         else
             return null;
     }
 
+    public void readCodeplug(){
+        FileInputStream fis;
+        byte[] buf=new byte[262144];
+        try{
+            fis=context.openFileInput("codeplug.img");
+            fis.read(buf);
+            fis.close();
+            importCodeplug(new MD380Codeplug(buf));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void writeCodeplug(){
         FileOutputStream fos;
         try{

@@ -317,13 +317,24 @@ public class MD380DFU {
             md380cmd((byte) 0xa2, (byte) 0x04);
             md380cmd((byte) 0xa2, (byte) 0x07);
 
+            /*
+            //Erase the old codeplug.
+            eraseBlock(0x00000000);
+            eraseBlock(0x00010000);
+            eraseBlock(0x00020000);
+            eraseBlock(0x00030000);
+            */
+
             //Move to the beginning of the codeplug.
             setAddress(0x00000000);
             enterDfuMode();
 
+
             int blocksize=1024;
             for(int blockadr=2;blockadr<0x102;blockadr++){
                 byte[] data=upload(blockadr,blocksize);
+                //byte[] data=new byte[1024];
+                //download(blockadr,data);
                 //Log.d("Codeplug","Got "+data.length+" bytes of the codeplug.");
                 //getStatus();
                 if(data.length!=blocksize){
@@ -351,9 +362,53 @@ public class MD380DFU {
         byte[] data=codeplug.getImage();
         if(data.length!=262144){
             Log.e("Codeplug","Refusing to send a codeplug of "+data.length+" bytes.");
+            return;
         }
 
-        Log.e("Codeplug","Refusing to send a codeplug because I don't know what the hell I'm doing.");
+        try {
+            //Enter DFU Mode
+            enterDfuMode();
+            //Enter programming mode and select SPI memory.
+            md380cmd((byte) 0x91, (byte) 0x01);//Programming mode.
+            md380cmd((byte) 0xa2, (byte) 0x02);
+            //getStatus();
+            //getCommand();
+            md380cmd((byte) 0xa2, (byte) 0x02);
+            md380cmd((byte) 0xa2, (byte) 0x03);
+            md380cmd((byte) 0xa2, (byte) 0x04);
+            md380cmd((byte) 0xa2, (byte) 0x07);
+
+
+            //Erase the old codeplug.
+            eraseBlock(0x00000000);
+            eraseBlock(0x00010000);
+            eraseBlock(0x00020000);
+            eraseBlock(0x00030000);
+
+
+            //Move to the beginning of the codeplug.
+            setAddress(0x00000000);
+            enterDfuMode();
+
+
+            int blocksize=1024;
+            int adr=0;
+            for(int blockadr=2;blockadr<0x102;blockadr++){
+                //Compose the frame.
+                byte[] datablock=new byte[1024];
+                for(int i=0;i<1024;i++){
+                    datablock[i]=data[adr++];
+                }
+                //Push it to the device.
+                download(blockadr,datablock);
+            }
+
+            //Reboot to the regular firmware.
+            //reboot();
+        } catch (MD380Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         return;
     }

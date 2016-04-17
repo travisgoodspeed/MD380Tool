@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import layout.CloneFragment;
 import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
@@ -50,12 +51,10 @@ import layout.UpgradeFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
         UpgradeFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener,
-        CodeplugFragment.OnFragmentInteractionListener, ContactsFragment.OnListFragmentInteractionListener
+        CodeplugFragment.OnFragmentInteractionListener, ContactsFragment.OnListFragmentInteractionListener,
+        CloneFragment.OnFragmentInteractionListener
 
 {
-    //Button btnCheck;
-    //TextView textInfo;
-
     //This points to our global tool.
     public static MD380Tool tool=null;
     //This is ugly, but so it goes.
@@ -228,6 +227,10 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = CodeplugFragment.class;
                 Log.w("Nav", "Codeplug fragment.");
                 break;
+            case R.id.nav_codeplugclone:
+                fragmentClass = CloneFragment.class;
+                Log.w("Nav", "Codeplug Cloner");
+                break;
             case R.id.nav_log:
                 fragmentClass = LogFragment.class;
                 Log.w("Nav", "Log fragment.");
@@ -236,10 +239,12 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = DmesgFragment.class;
                 Log.w("Nav", "Dmesg fragment.");
                 break;
+            /*
             case R.id.nav_messages:
                 fragmentClass = MessagesFragment.class;
                 Log.w("Nav", "Messages fragment.");
                 break;
+                */
             case R.id.nav_upgrade:
                 fragmentClass = UpgradeFragment.class;
                 Log.w("Nav", "Upgrade fragment.");

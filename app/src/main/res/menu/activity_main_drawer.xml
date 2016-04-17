@@ -21,6 +21,10 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="Codeplug Up/Download" />
             <item
+                android:id="@+id/nav_codeplugclone"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Codeplug Clone" />
+            <item
                 android:id="@+id/nav_contacts"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Contacts" />
@@ -41,6 +45,12 @@
                 android:id="@+id/nav_scanlists"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Scan Lists" />
+        <!--
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Messages" />
+        -->
         </menu>
     </item>
 
@@ -51,19 +61,13 @@
             android:id="@+id/nav_log"
             android:icon="@drawable/ic_menu_manage"
             android:title="Call Log" />
-
-        <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Messages" />
-
         <item
             android:id="@+id/nav_dmesg"
             android:icon="@drawable/ic_menu_manage"
             android:title="Dmesg Log" />
         </menu>
     </item>
-
+<!--
     <item android:title="DMR MARC">
         <menu>
             <item
@@ -76,6 +80,6 @@
                 android:title="Repeater DB" />
         </menu>
     </item>
-
+-->
 
 </menu>

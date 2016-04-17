@@ -133,10 +133,6 @@ public class MD380Codeplug {
         return image;
     }
 
-    /* Exports to SQL. */
-    public void exportDB(){
-
-    }
 
     public static void main(String[] args) throws IOException{
         FileInputStream in=null;

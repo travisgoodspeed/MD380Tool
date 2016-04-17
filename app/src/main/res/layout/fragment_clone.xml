@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="layout.CloneFragment">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="The button below will write your stored codeplug into a new radio,
+with a new identity.  It's handy to give a friend your settings, without giving them
+your DMR-MARC ID." />
+        </ScrollView>
+
+
+        <EditText
+            android:id="@+id/clone_llid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            />
+
+        <!--Invisible to start, but we'll show it during reading and writing.-->
+        <ProgressBar
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/pbar_clone"
+            android:visibility="invisible"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Read Target Identity"
+            android:visibility="invisible"
+            android:id="@+id/but_download_readcloneident"
+            android:layout_gravity="center_horizontal|bottom" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Write Clone to Target"
+            android:id="@+id/but_download_clonecodeplug"
+            android:layout_gravity="center_horizontal|bottom" />
+
+    </LinearLayout>
+</FrameLayout>
