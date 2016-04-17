@@ -1,5 +1,7 @@
 package com.travisgoodspeed.md380tool.content;
 
+import android.database.Cursor;
+
 import com.travisgoodspeed.md380tool.MD380Contact;
 import com.travisgoodspeed.md380tool.MainActivity;
 
@@ -26,30 +28,15 @@ public class ContactContent {
     //private static final int COUNT = 999;
 
     static {
-        int count = MainActivity.db.getContactCount();
-        // Add some sample items.
-        for (int i = 1; i <= count; i++) {
-            addItem(createContact(i));
-        }
+        Cursor c=MainActivity.db.getAllContacts();
+        if(c.moveToFirst()) do{
+            addItem(new MD380Contact(c));
+        }while(c.moveToNext());
     }
 
     private static void addItem(MD380Contact item) {
         if(item==null) return;
         ITEMS.add(item);
         ITEM_MAP.put(""+item.id, item);
-    }
-
-    private static MD380Contact createContact(int position) {
-        MD380Contact contact=MainActivity.db.getContact(position);
-        return contact;
-    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
     }
 }

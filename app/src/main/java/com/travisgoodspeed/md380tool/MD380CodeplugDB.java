@@ -141,6 +141,12 @@ public class MD380CodeplugDB {
         else
             return null;
     }
+    /* Returns a bunch of contacts. */
+    public Cursor getAllContacts(){
+        Cursor c=db.rawQuery("select id, llid, flag, name from contacts;",null);
+        return c;
+    }
+
     /* Returns a message. */
     public MD380Message getMessage(int adr){
         Cursor c=db.rawQuery("select id, message from messages where id="+adr, null);
@@ -148,6 +154,11 @@ public class MD380CodeplugDB {
             return new MD380Message(c);
         else
             return null;
+    }
+    /* Returns a bunch of contacts. */
+    public Cursor getAllMessages(){
+        Cursor c=db.rawQuery("select * from messages;",null);
+        return c;
     }
 
     public void readCodeplug(){

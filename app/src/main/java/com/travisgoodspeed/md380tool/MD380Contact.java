@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 /**
- * Created by travis on 4/14/16.
+ * This repressents and MD380's contact.
  */
 public class MD380Contact{
     public int id;

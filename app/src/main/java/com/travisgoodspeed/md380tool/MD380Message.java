@@ -4,14 +4,14 @@ import android.database.Cursor;
 import android.util.Log;
 
 /**
- * Created by travis on 4/16/16.
+ * This represents and MD380's Quick-Text Message.
  */
 public class MD380Message {
     public int id;
     public String message;
 
     //Creates a message from a database record.
-    MD380Message(Cursor cur){
+    public MD380Message(Cursor cur){
         try {
             id = cur.getInt(cur.getColumnIndex("id"));
             message = cur.getString(cur.getColumnIndex("message"));
@@ -22,7 +22,7 @@ public class MD380Message {
         }
     }
     //Creates a message from a codeplug.
-    MD380Message(MD380Codeplug cp, int idx){
+    public MD380Message(MD380Codeplug cp, int idx){
         id=idx;
         message=cp.getMessage(idx);
     }

@@ -1,5 +1,8 @@
 package com.travisgoodspeed.md380tool.content;
 
+import android.database.Cursor;
+
+import com.travisgoodspeed.md380tool.MD380Contact;
 import com.travisgoodspeed.md380tool.MD380Message;
 import com.travisgoodspeed.md380tool.MainActivity;
 
@@ -24,29 +27,14 @@ public class MessageContent {
     public static final Map<String, MD380Message> ITEM_MAP = new HashMap<String, MD380Message>();
 
     static {
-        // Add some sample items.
-        int count= MainActivity.db.getMessageCount();
-        for (int i = 1; i <= count; i++) {
-            addItem(createMessage(i));
-        }
+        Cursor c=MainActivity.db.getAllMessages();
+        if(c.moveToFirst()) do{
+            addItem(new MD380Message(c));
+        }while(c.moveToNext());
     }
 
     private static void addItem(MD380Message item) {
         ITEMS.add(item);
         ITEM_MAP.put(""+item.id, item);
     }
-
-    private static MD380Message createMessage(int position) {
-        return MainActivity.db.getMessage(position);
-    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
-    }
-
 }
