@@ -167,7 +167,7 @@ public class MD380DFU {
     /* Aborts the current transaction. */
     public void abort() throws MD380Exception{
         byte data[]=null;
-        connection.controlTransfer(0x21, ABORT, 0, 0, data,0, 3000);
+        connection.controlTransfer(0x21, ABORT, 0, 0, data, 0, 3000);
     }
 
     /* Downloads data to a target block. */
@@ -177,12 +177,7 @@ public class MD380DFU {
             throw new MD380Exception("Transfer Error");
         //First we apply the change.
         getStatus();
-        /*
-        try{
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+
         //Then we return the result.
         return getStatus();
     }
@@ -199,8 +194,12 @@ public class MD380DFU {
 
     /* Reboots the radio. */
     public void reboot() throws MD380Exception{
-        //This is one of the custom commands in the 91 series.
-        md380cmd((byte) 0x91, (byte) 0x05);
+        try {
+            md380cmd((byte) 0x91, (byte) 0x05);
+        }catch(MD380Exception e){
+            Log.d("md380cmd","Silencing an exception for the reboot.");
+            disconnect();
+        }
     }
     /* Halts all threads and displays "Programming Mode" on the screen. */
     public void programMode() throws MD380Exception{
@@ -317,14 +316,6 @@ public class MD380DFU {
             md380cmd((byte) 0xa2, (byte) 0x04);
             md380cmd((byte) 0xa2, (byte) 0x07);
 
-            /*
-            //Erase the old codeplug.
-            eraseBlock(0x00000000);
-            eraseBlock(0x00010000);
-            eraseBlock(0x00020000);
-            eraseBlock(0x00030000);
-            */
-
             //Move to the beginning of the codeplug.
             setAddress(0x00000000);
             enterDfuMode();
@@ -351,10 +342,12 @@ public class MD380DFU {
             codeplugBuf.get(codeplugData);
 
             codeplug=new MD380Codeplug(codeplugData);
+            reboot();
         } catch (MD380Exception e) {
             e.printStackTrace();
             return null;
         }
+
         return codeplug;
     }
 
@@ -404,7 +397,7 @@ public class MD380DFU {
             }
 
             //Reboot to the regular firmware.
-            //reboot();
+            reboot();
         } catch (MD380Exception e) {
             e.printStackTrace();
             return;
@@ -442,7 +435,6 @@ public class MD380DFU {
 
         //Skip file header, which begins with "OutSecurityBin"
         upgradeBuf.get(block, 0, 0x100);
-        
     }
 
     /* Performs an upgrade step, returning true when the upgrade has been completed. */
