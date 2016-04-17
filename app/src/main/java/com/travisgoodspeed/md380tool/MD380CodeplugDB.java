@@ -159,7 +159,7 @@ public class MD380CodeplugDB {
             fis.close();
             importCodeplug(new MD380Codeplug(buf));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e("readCodeplug()","Codeplug not found.  I should be loading a blank one instead.");
         } catch (IOException e) {
             e.printStackTrace();
         }

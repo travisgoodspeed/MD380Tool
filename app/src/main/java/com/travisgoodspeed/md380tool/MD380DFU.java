@@ -324,10 +324,7 @@ public class MD380DFU {
             int blocksize=1024;
             for(int blockadr=2;blockadr<0x102;blockadr++){
                 byte[] data=upload(blockadr,blocksize);
-                //byte[] data=new byte[1024];
-                //download(blockadr,data);
-                //Log.d("Codeplug","Got "+data.length+" bytes of the codeplug.");
-                //getStatus();
+
                 if(data.length!=blocksize){
                     Log.e("Codeplug","Block was "+data.length+" bytes.  Should have been "+blocksize+".");
                     return null;
@@ -337,7 +334,7 @@ public class MD380DFU {
 
             //Now dump the buffer.
             byte codeplugData[]=new byte[262144];
-            //codeplugBuf.get(codeplugData,0,262144);
+
             codeplugBuf.rewind();
             codeplugBuf.get(codeplugData);
 

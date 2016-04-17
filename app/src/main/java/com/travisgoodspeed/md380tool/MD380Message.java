@@ -13,7 +13,6 @@ public class MD380Message {
     //Creates a message from a database record.
     MD380Message(Cursor cur){
         try {
-            Log.d("Contact", "" + cur.getInt(0));
             id = cur.getInt(cur.getColumnIndex("id"));
             message = cur.getString(cur.getColumnIndex("message"));
         }catch(Exception e){
