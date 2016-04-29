@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.travisgoodspeed.md380tool.MD380Message;
 import com.travisgoodspeed.md380tool.R;
 
 /**
@@ -43,11 +44,11 @@ public class MessageEditFragment extends Fragment {
      * @return A new instance of fragment MessageEditFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MessageEditFragment newInstance(String param1, String param2) {
+    public static MessageEditFragment newInstance(MD380Message item) {
         MessageEditFragment fragment = new MessageEditFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        //args.putString(ARG_PARAM1, param1);
+        //args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,8 +57,10 @@ public class MessageEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            /*
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            */
         }
     }
 

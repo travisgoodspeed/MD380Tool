@@ -33,6 +33,7 @@ import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
 import layout.LogFragment;
+import layout.MessageEditFragment;
 import layout.UpgradeFragment;
 
 
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity
         CodeplugFragment.OnFragmentInteractionListener,
         ContactsFragment.OnListFragmentInteractionListener,
         MessagesFragment.OnListFragmentInteractionListener,
-        CloneFragment.OnFragmentInteractionListener
+        CloneFragment.OnFragmentInteractionListener,
+        MessageEditFragment.OnFragmentInteractionListener
 
 {
     //This points to our global tool.
@@ -119,7 +121,6 @@ public class MainActivity extends AppCompatActivity
                             }catch(MD380Exception e){
                                 Log.e("MD380",e.getMessage());
                                 e.printStackTrace();
-                                //textInfo.setText(e.getMessage());
                                 tool.disconnect();
                             }
                         }
@@ -281,5 +282,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(MD380Message item) {
         Log.d("MainActivity","TODO Implement a message viewer/editor.");
+        FragmentManager fragmentManager=getSupportFragmentManager();
+        Fragment fragment=MessageEditFragment.newInstance(item);
+        fragmentManager.beginTransaction().replace(R.id.flContent,fragment).commit();
     }
 }
