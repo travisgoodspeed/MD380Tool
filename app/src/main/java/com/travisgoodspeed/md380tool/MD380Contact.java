@@ -31,7 +31,7 @@ public class MD380Contact{
 
     //Constructs a contact from a codeplug.
     public MD380Contact(MD380Codeplug codeplug, int idx){
-        int adr=0x5f80+36*idx;
+        int adr=0x5f80+36*(idx-1);
         //System.out.println("Contact(codeplug,adr) isn't yet written.");
         id=idx;
         llid=codeplug.readul24(adr);

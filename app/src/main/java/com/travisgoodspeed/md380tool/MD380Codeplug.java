@@ -42,6 +42,12 @@ public class MD380Codeplug {
         image[adr]=val;
     }
 
+    /* Reads a 16-bit pair */
+    public int readul16(int adr){
+        return image[adr]|(image[adr+1]<<8);
+    }
+
+
     /* Reads a wide string from adr.
      * maxlen is in bytes, not characters.
      */
@@ -79,13 +85,13 @@ public class MD380Codeplug {
 
     //Writes a new message.
     public void setMessage(int i, String s){
-        i=i-1;//1 indexing.
-        writeWString(0x2180+288*i,s,288);
+        //i=i-1;//1 indexing.
+        writeWString(0x2180+288*(i-1),s,288);
     }
     //Reads a new message.
     public String getMessage(int i){
-        i=i-1;//1 indexing.
-        return readWString(0x2180+288*i,288);
+        //i=i-1;//1 indexing.
+        return readWString(0x2180+288*(i-1),288);
     }
 
 
@@ -97,13 +103,34 @@ public class MD380Codeplug {
         if(i==0 || i>1000)
             return null;
 
-        i=i-1;//1 indexing
+        //i=i-1;//1 indexing
 
         MD380Contact c=new MD380Contact(this,i);
         if(c.nom==null)
             return null;
 
         return c;
+    }
+
+    public void setListenGroup(int i, MD380ListenGroup l){
+        //nothing yet
+    }
+    public MD380ListenGroup getListenGroup(int i){
+        MD380ListenGroup l=new MD380ListenGroup(this,i);
+        if(l.nom==null)
+            return null;
+        return l;
+    }
+
+    public void setZone(int i, MD380Zone z){
+        //nothing yet
+    }
+
+    public MD380Zone getZone(int i){
+        MD380Zone z=new MD380Zone(this,i);
+        if(z.nom==null)
+            return null;
+        return z;
     }
 
     public void printCodeplug(){
@@ -119,6 +146,18 @@ public class MD380Codeplug {
             MD380Contact c=getContact(i);
             if(c!=null)
                 System.out.println("Contact "+i+": "+c.llid+", "+c.nom);
+        }
+        //Print the listengroups.
+        for(int i=1;i<100;i++){
+            MD380ListenGroup l=getListenGroup(i);
+            if(l!=null)
+                System.out.println("ListenGroup "+i+": "+l.nom);
+        }
+        //Print the zones.
+        for(int i=1;i<100;i++){
+            MD380Zone z=getZone(i);
+            if(z!=null)
+                System.out.println("Zone "+i+": "+z.nom);
         }
     }
 

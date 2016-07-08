@@ -28,18 +28,35 @@ public class MD380CodeplugDB {
     SQLiteDatabase db=null;
 
     private static final String SQL_CREATE_CONTACTS=
-            "CREATE TABLE CONTACTS(id, llid, flag, name);\n";
+            "CREATE TABLE CONTACTS(id, llid, flag, name);";
     private static final String SQL_CREATE_MESSAGES =
             "CREATE TABLE MESSAGES(id, message);";
+    private static final String SQL_CREATE_LISTENGROUPS =
+            "CREATE TABLE LISTENGROUPS(id, name);";
+    private static final String SQL_CREATE_LISTENGROUPITEMS =
+            "CREATE TABLE LISTENGROUPITEMS(groupid, contactid);";
+    private static final String SQL_CREATE_ZONES =
+            "CREATE TABLE ZONES(id, name);";
+    private static final String SQL_CREATE_ZONEITEMS =
+            "CREATE TABLE ZONEITEMS(zoneid, channelid);";
+
+    //TODO This is woefully incomplete.
+    public static final String SQL_CREATE_CHANNELS =
+            "CREATE TABLE CHANNELS(id, name, txfreq, rxfreq);";
+
 
     private static final String SQL_DELETE_CONTACTS =
             "DROP TABLE IF EXISTS CONTACTS;";
     private static final String SQL_DELETE_MESSAGES =
             "DROP TABLE IF EXISTS MESSAGES;";
+    public static final String SQL_DELETE_LISTENGROUPS =
+            "DROP TABLE IF EXISTS LISTENGROUPS;";
+    public static final String SQL_DELETE_LISTENGROUPITEMS =
+            "DROP TABLE IF EXISTS LISTENGROUPITEMS;";
 
     public class CodeplugDbHelper extends SQLiteOpenHelper {
         //If you change the schema, increment the database version.
-        public static final int DATABASE_VERSION = 6;
+        public static final int DATABASE_VERSION = 7;
         public static final String DATABASE_NAME = "md380codeplug.db";
 
 
@@ -50,12 +67,16 @@ public class MD380CodeplugDB {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_CONTACTS);
             db.execSQL(SQL_CREATE_MESSAGES);
+            db.execSQL(SQL_CREATE_LISTENGROUPS);
+            db.execSQL(SQL_CREATE_LISTENGROUPITEMS);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.d("CodeplugDB", "Deleting entries to upgrade database.");
             db.execSQL(SQL_DELETE_CONTACTS);
             db.execSQL(SQL_DELETE_MESSAGES);
+            db.execSQL(SQL_DELETE_LISTENGROUPS);
+            db.execSQL(SQL_DELETE_LISTENGROUPITEMS);
             onCreate(db);
         }
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -83,8 +104,12 @@ public class MD380CodeplugDB {
         //Wipe the old tables and begin new ones.
         db.execSQL(SQL_DELETE_CONTACTS);
         db.execSQL(SQL_DELETE_MESSAGES);
+        db.execSQL(SQL_DELETE_LISTENGROUPS);
+        db.execSQL(SQL_DELETE_LISTENGROUPITEMS);
         db.execSQL(SQL_CREATE_CONTACTS);
         db.execSQL(SQL_CREATE_MESSAGES);
+        db.execSQL(SQL_CREATE_LISTENGROUPS);
+        db.execSQL(SQL_CREATE_LISTENGROUPITEMS);
 
         //Populate the tables.
         Log.d("CodeplugDB", "Inserting Contacts");
