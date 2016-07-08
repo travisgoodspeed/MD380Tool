@@ -24,11 +24,11 @@ public class MD380Message {
     //Creates a message from a codeplug.
     public MD380Message(MD380Codeplug cp, int idx){
         id=idx;
-        message=cp.getMessage(idx);
+        message=cp.readWString(0x2180 + 288 * (idx - 1), 288);
     }
 
     //Writes the contact back to the codeplug.
     public void writeback(MD380Codeplug codeplug, int idx){
-
+        codeplug.writeWString(0x2180 + 288 * (idx - 1), message, 288);
     }
 }

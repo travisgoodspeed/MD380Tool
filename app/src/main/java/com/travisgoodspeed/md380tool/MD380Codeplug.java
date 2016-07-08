@@ -83,15 +83,26 @@ public class MD380Codeplug {
         }
     }
 
+
+    /*
     //Writes a new message.
     public void setMessage(int i, String s){
-        //i=i-1;//1 indexing.
         writeWString(0x2180+288*(i-1),s,288);
     }
     //Reads a new message.
     public String getMessage(int i){
-        //i=i-1;//1 indexing.
         return readWString(0x2180+288*(i-1),288);
+    }
+    */
+
+    public MD380Message getMessage(int i){
+        MD380Message m=new MD380Message(this,i);
+        if(m.message==null)
+            return null;
+        return m;
+    }
+    public void setMessage(MD380Message message){
+        message.writeback(this,message.id);
     }
 
 
@@ -137,9 +148,9 @@ public class MD380Codeplug {
         System.out.println("Printing MD380 Codeplug:");
         //Print the messages.
         for(int i=1;i<=50;i++){
-            String message=getMessage(i);
+            MD380Message message=getMessage(i);
             if(message!=null)
-                System.out.println("Message "+i+": "+message);
+                System.out.println("Message "+i+": "+message.message);
         }
         //Print the contacts
         for(int i=1;i<=1000;i++){

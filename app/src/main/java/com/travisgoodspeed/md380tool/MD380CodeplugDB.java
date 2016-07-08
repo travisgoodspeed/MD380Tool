@@ -139,11 +139,11 @@ public class MD380CodeplugDB {
         }
         Log.d("CodeplugDB", "Inserting Messages");
         for(int i=1;i<=50;i++){
-            String s=codeplug.getMessage(i);
-            if(s!=null){
+            MD380Message m =codeplug.getMessage(i);
+            if(m!=null){
                 ContentValues values=new ContentValues(1);
                 values.put("id",i);
-                values.put("message", s);
+                values.put("message", m.message);
                 db.insert("messages",
                         null,
                         values);
