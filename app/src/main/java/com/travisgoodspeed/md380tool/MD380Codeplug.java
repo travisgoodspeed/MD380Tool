@@ -16,7 +16,7 @@ public class MD380Codeplug {
     public byte[] image=null;
 
     //Returns an unsigned byte.
-    private int b(byte b){
+    private int b(int b){
         return ((int) b)&0xFF;
     }
 
@@ -35,7 +35,7 @@ public class MD380Codeplug {
     }
     /* Reads a byte. */
     public byte readu8(int adr){
-        return image[adr];
+        return (byte) b(image[adr]);
     }
     /* Writes a byte. */
     public void writeu8(int adr, byte val){
@@ -44,7 +44,7 @@ public class MD380Codeplug {
 
     /* Reads a 16-bit pair */
     public int readul16(int adr){
-        return image[adr]|(image[adr+1]<<8);
+        return b(image[adr])|b(image[adr+1]<<8);
     }
 
 
@@ -150,14 +150,22 @@ public class MD380Codeplug {
         //Print the listengroups.
         for(int i=1;i<100;i++){
             MD380ListenGroup l=getListenGroup(i);
-            if(l!=null)
-                System.out.println("ListenGroup "+i+": "+l.nom);
+            if(l!=null) {
+                String nums="";
+                for(int j=0;j<l.contacts.length;j++)
+                    nums=nums+" "+l.contacts[j];
+                System.out.println("ListenGroup " + i + ": " + l.nom+" "+nums);
+            }
         }
         //Print the zones.
         for(int i=1;i<100;i++){
             MD380Zone z=getZone(i);
-            if(z!=null)
-                System.out.println("Zone "+i+": "+z.nom);
+            if(z!=null) {
+                String nums="";
+                for(int j=0;j<z.channels.length;j++)
+                    nums=nums+" "+z.channels[j];
+                System.out.println("Zone " + i + ": " + z.nom + " " + nums);
+            }
         }
     }
 

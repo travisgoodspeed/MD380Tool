@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 /**
- * This represents and MD380's Quick-Text Message.
+ * This represents an MD380's Quick-Text Message.
  */
 public class MD380Message {
     public int id;

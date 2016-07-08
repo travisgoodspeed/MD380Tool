@@ -9,7 +9,7 @@ import android.util.Log;
 public class MD380Zone {
     public int id;
     public String nom;
-    public int contacts[]; //max of 32 entries
+    public int channels[]; //max of 32 entries
 
     public MD380Zone(Cursor cur){
         Log.d("Zone",cur.getString(1));
@@ -22,9 +22,9 @@ public class MD380Zone {
         int adr=0x149e0+64*(idx-1); //zone
         id=idx;
         nom=codeplug.readWString(adr,32);
-        contacts=new int[32];
-        for(int i=0;i<31;i++){
-            contacts[i]=codeplug.readul16(adr+32+2*i);
+        channels=new int[16];
+        for(int i=0;i<16;i++){
+            channels[i]=codeplug.readul16(adr+32+2*i);
         }
     }
 }

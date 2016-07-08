@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 /**
- * This repressents and MD380's contact.
+ * This represents an MD380's contact.
  */
 public class MD380Contact{
     public int id;
@@ -35,21 +35,11 @@ public class MD380Contact{
         //System.out.println("Contact(codeplug,adr) isn't yet written.");
         id=idx;
         llid=codeplug.readul24(adr);
-        flags=codeplug.readu8(adr + 3);
+        flags=(byte) codeplug.readu8(adr + 3);
         nom=codeplug.readWString(adr+4, 32);
     }
 
     //Writes the contact back to the codeplug.
     public void writeback(MD380Codeplug codeplug, int idx){
-
     }
-
-    /*
-    //Constructs a contact from input values.
-    public MD380Contact(int llid, byte flags, String nom){
-        this.llid=llid;
-        this.flags=flags;
-        this.nom=nom;
-    }
-    */
 }
