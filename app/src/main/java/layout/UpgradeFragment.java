@@ -52,8 +52,10 @@ public class UpgradeFragment extends Fragment {
 
             //Grab the firmware as a raw resource.
             InputStream ins = getResources().openRawResource(R.raw.firmware);
-            byte firmware[]=new byte[994816];
+            byte firmware[]=new byte[995840];
             try {
+                Log.d("upgrade",
+                        String.format("Flashing Non-GPS firmware."));
                 ins.read(firmware);
                 MainActivity.tool.upgradeApplicationInit(firmware);
             }catch(IOException e){

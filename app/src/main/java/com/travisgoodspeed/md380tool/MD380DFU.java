@@ -405,8 +405,8 @@ public class MD380DFU {
     private int upgradeAddress=0;
     public void upgradeApplicationInit(byte[] upgrade) throws MD380Exception{
         //Check the filesize.
-        if(upgrade.length!=994816){
-            Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not 994816.  Aborting.");
+        if(upgrade.length<990000 || upgrade.length>1024*1024){
+            Log.e("upgradeApplication","Update is "+upgrade.length+" bytes, not remotely the 994816 we expect.  Aborting.");
             return;
         }
 

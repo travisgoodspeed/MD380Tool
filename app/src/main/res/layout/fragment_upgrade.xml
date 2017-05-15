@@ -26,7 +26,8 @@
                 android:text="To start this firmware updater, first boot your device into the recovery bootloader by holding
 the PTT button and the button above it while power cycling.\n\nThe patched firmware includes support for
 a number of advanced features, such as promiscuous reception of all public talkgroups and display on the LCD
-of the talkgroup numbers.  This firmware is EXPERIMENTAL, and you should expect there to be a few rough edges.
+of the talkgroup numbers.  This firmware is EXPERIMENTAL, and you should expect there to be a few rough edges.\n\n
+This firmware comes in two varieties, one for GPS devices and another for Non-GPS devices.  Be sure to install the right one.
 "/>
         </ScrollView>
 
@@ -42,8 +43,14 @@ of the talkgroup numbers.  This firmware is EXPERIMENTAL, and you should expect 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="FLASH UPGRADE"
+            android:text="Non-GPS UPGRADE"
             android:id="@+id/but_upgrade"
+            android:layout_gravity="center_horizontal|bottom" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPS UPGRADE"
+            android:id="@+id/but_upgradegps"
             android:layout_gravity="center_horizontal|bottom" />
     </LinearLayout>
 </FrameLayout>
