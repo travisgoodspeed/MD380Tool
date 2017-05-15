@@ -72,24 +72,4 @@ public class MD380Tool extends MD380DFU {
         return head+tail;
     }
 
-    /* Returns the source and destination of the most recent call by peeking memory.
-    * In the returned array,
-    * [0] is the outgoing address of this radio.
-    * [1] is the source address of the most recent packet.
-    * [2] is the destination address of the most recent packet.
-    */
-    public int[] getCallLog() throws MD380Exception{
-        byte log[]=upload_ram(0x2001d098,16);
-        int toret[]=new int[3];
-
-
-        //Log.d("getCallLog",String.format("Got %d bytes.",log.length));
-
-        toret[0]=intfrombytes(log,0);
-        toret[1]=intfrombytes(log,4);
-        toret[2]=intfrombytes(log,8);
-
-        return toret;
-
-    }
 }

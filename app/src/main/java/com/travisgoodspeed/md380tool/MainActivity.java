@@ -32,7 +32,6 @@ import layout.CloneFragment;
 import layout.CodeplugFragment;
 import layout.DmesgFragment;
 import layout.HomeFragment;
-import layout.LogFragment;
 import layout.MessageEditFragment;
 import layout.UpgradeFragment;
 
@@ -233,10 +232,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_codeplugclone:
                 fragmentClass = CloneFragment.class;
                 Log.w("Nav", "Codeplug Cloner");
-                break;
-            case R.id.nav_log:
-                fragmentClass = LogFragment.class;
-                Log.w("Nav", "Log fragment.");
                 break;
             case R.id.nav_dmesg:
                 fragmentClass = DmesgFragment.class;
