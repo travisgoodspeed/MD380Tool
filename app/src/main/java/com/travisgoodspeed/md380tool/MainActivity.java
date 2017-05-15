@@ -43,11 +43,6 @@ import layout.UpgradeFragment;
  * This is the main activity window for all MD380 interactions on Android.
  */
 
-
-
-
-
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DmesgFragment.OnFragmentInteractionListener,
         UpgradeFragment.OnFragmentInteractionListener,

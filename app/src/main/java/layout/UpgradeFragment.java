@@ -41,8 +41,7 @@ public class UpgradeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    /* This task grabs the dmesg at regular intervals, in the main thread
-        to avoid contention.
+    /* This task upgrades the radio firmware to an image including in the raw resources.
      */
     private class UpgradeTask extends AsyncTask<TextView, Integer, Void> {
         Integer frame=1;
