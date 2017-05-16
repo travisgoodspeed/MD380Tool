@@ -30,20 +30,15 @@ import java.io.InputStream;
  * create an instance of this fragment.
  */
 public class UpgradeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     /* This task upgrades the radio firmware to an image including in the raw resources.
      */
     private class UpgradeTask extends AsyncTask<TextView, Integer, Void> {
+
+
+
         Integer frame=1;
         @Override
         protected Void doInBackground(TextView... params) {
@@ -122,20 +117,12 @@ public class UpgradeFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static UpgradeFragment newInstance(String param1, String param2) {
         UpgradeFragment fragment = new UpgradeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     ProgressBar progressBar=null;
@@ -156,6 +143,7 @@ public class UpgradeFragment extends Fragment {
                 if(bgtask==null && MainActivity.tool!=null && MainActivity.tool.isConnected()) {
                     bgtask = new UpgradeTask();
                     bgtask.execute();
+
                 }else{
                     Log.d("dmesg","bgtask!=null at onAttach()!");
                 }

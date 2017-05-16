@@ -14,50 +14,56 @@
         </menu>
     </item>
 
+
     <item android:title="Codeplug">
         <menu>
             <item
                 android:id="@+id/nav_codeplug"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Codeplug Up/Download" />
+
             <item
+                android:visible="false"
                 android:id="@+id/nav_codeplugclone"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Codeplug Clone" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_contacts"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Contacts" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_rxgroups"
                 android:icon="@drawable/ic_menu_send"
                 android:title="RX Groups" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_channels"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Channels" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_zones"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Zones" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_scanlists"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Scan Lists" />
             <item
+                android:visible="false"
                 android:id="@+id/nav_messages"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Quick Texts" />
+
         </menu>
     </item>
 
     <item android:title="Logs">
         <menu>
 
-        <item
-            android:id="@+id/nav_log"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Call Log" />
         <item
             android:id="@+id/nav_dmesg"
             android:icon="@drawable/ic_menu_manage"
