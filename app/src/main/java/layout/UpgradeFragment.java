@@ -36,26 +36,15 @@ public class UpgradeFragment extends Fragment {
     /* This task upgrades the radio firmware to an image including in the raw resources.
      */
     private class UpgradeTask extends AsyncTask<TextView, Integer, Void> {
-
-
-
         Integer frame=1;
+        byte firmware[];
         @Override
         protected Void doInBackground(TextView... params) {
             //TextView ti=params[0];
             publishProgress(0);
 
-            //Grab the firmware as a raw resource.
-            InputStream ins = getResources().openRawResource(R.raw.firmware);
-            byte firmware[]=new byte[995840];
             try {
-                Log.d("upgrade",
-                        String.format("Flashing Non-GPS firmware."));
-                ins.read(firmware);
                 MainActivity.tool.upgradeApplicationInit(firmware);
-            }catch(IOException e){
-                e.printStackTrace();
-                return null;
             }catch(MD380Exception e){
                 e.printStackTrace();
                 return null;
@@ -133,17 +122,55 @@ public class UpgradeFragment extends Fragment {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_upgrade, container, false);
 
-        Button btnCheck = (Button) v.findViewById(R.id.but_upgrade);
+        Button btnUpgrade = (Button) v.findViewById(R.id.but_upgrade);
         progressBar=(ProgressBar) v.findViewById(R.id.pbar_upgrade);
-        btnCheck.setOnClickListener(new View.OnClickListener() {
+        btnUpgrade.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 //Install the firmware in a background thread.
                 if(bgtask==null && MainActivity.tool!=null && MainActivity.tool.isConnected()) {
                     bgtask = new UpgradeTask();
-                    bgtask.execute();
 
+                    //Grab the firmware as a raw resource.
+                    InputStream ins = getResources().openRawResource(R.raw.firmware);
+                    byte firmware[]=new byte[995840];
+                    try {
+                        Log.d("upgrade",
+                                String.format("Flashing Non-GPS firmware."));
+                        ins.read(firmware);
+                        bgtask.firmware=firmware;
+                        bgtask.execute();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    Log.d("dmesg","bgtask!=null at onAttach()!");
+                }
+            }
+        });
+
+        Button btnUpgradeGPS = (Button) v.findViewById(R.id.but_upgradegps);
+        btnUpgradeGPS.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                //Install the firmware in a background thread.
+                if(bgtask==null && MainActivity.tool!=null && MainActivity.tool.isConnected()) {
+                    bgtask = new UpgradeTask();
+
+                    //Grab the firmware as a raw resource.
+                    InputStream ins = getResources().openRawResource(R.raw.firmwaregps);
+                    byte firmware[]=new byte[999936];
+                    try {
+                        Log.d("upgrade",
+                                String.format("Flashing GPS firmware."));
+                        ins.read(firmware);
+                        bgtask.firmware=firmware;
+                        bgtask.execute();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
                 }else{
                     Log.d("dmesg","bgtask!=null at onAttach()!");
                 }
